@@ -1,0 +1,616 @@
+
+
+<!---------------------------------------------script----------------------------------------->
+
+
+
+<style>
+   
+    p{
+        font-size: 18px;
+        
+    }
+    th{
+        color: rgb(12, 79, 234);
+
+    }
+    body{
+        font-size: 16px;
+    }
+   
+ 
+
+
+ 
+</style>
+
+
+<div class="body-wrapper">
+    <div class="container-fluid">
+
+
+       
+        <div class="col-sm-12 col-lg-12 " >
+            <div id="item_get_detail_target">
+                
+                
+
+                        </div>
+
+                    </div>
+
+
+                    
+    
+                    
+                </div>
+
+               
+
+            </div>
+
+
+           
+
+
+                        
+       
+
+        <div class="row pt-0 m-0 p-0 bg-light bs">
+            <div class="col " style="text-align: end; margin-right:30px;"> <a class="mr-12" href="{% url 'companyreport' %}" style="text-align: right; font-size:xx-large; color: black;">
+                <i class="fa fa-times mt-2" aria-hidden="true"></i>
+            </a></div>
+            <div class="card p-0 bg-light" style="min-height: 60vh;">
+                <div class="row m-0 p-0 pt-3">
+                    <div class="col-sm-12 col-lg-3">
+                       
+                        
+                    <div class="col-sm-12 col-lg-7">
+
+                    </div>
+
+                    <div class="col-sm-12 col-lg-2 pt-1">
+
+                        
+                    </div>
+                    <div class="mt-3" id="content-div">
+                        <h5 class="tb fw-bolder pt-2" style="text-align: center;color: red;">{{staff.company.company_name}}</h5>
+                        <h5 class="tb fw-bolder pt-2" style="text-align: center;">Item Report - Party</h5>
+                        <div class="table-responsive">
+                        <table border="1" id="myTable"
+                            class="table table-bordered table-info table-hover  tb  w-100" style="margin: 10px;padding: 6px">
+                            <thead style="padding: 6px;">
+                                
+                                <th class="text-center fs-2 bg-secondary text-dark">Item Name
+                                    <div class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+                                        aria-expanded="false"><i class="fas fa-filter filter-button"></i></div>
+
+                                    
+
+                                    </div>
+                                </th>
+
+                                <th class="text-center fs-2 bg-secondary text-dark">
+                                    Sales Quantity
+                                    <div class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+                                        aria-expanded="false"><i class="fas fa-filter filter-button"></i></div>
+
+                                   
+
+                                    </div>
+                                </th>
+
+
+                                <th class="text-center fs-2 bg-secondary text-dark">
+                                    Sales Amount
+                                    <div class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+                                        aria-expanded="false"><i class="fas fa-filter filter-button"></i></div>
+
+                                   
+                                    </div>
+                                </th>
+
+                                
+                                <th class="text-center fs-2 bg-secondary text-dark">Purchase Quantity
+                                    <div class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+                                        aria-expanded="false"><i class="fas fa-filter filter-button"></i></div>
+
+                                    
+                                    </div>
+                                </th>
+
+                                <th class="text-center fs-2 bg-secondary text-dark">Purcahes Amount
+                                   
+                                    </div>
+                                </th>
+
+                               
+
+                               
+                                
+                                
+                                
+                               
+                            </thead>
+                            <tbody id = myTableBody >
+                                {% for cd in combined_data.values %}
+                                <tr id="mytable_tr">
+                                    <td>{{cd.item_name}}</td>
+                                    <td class="sales_quantity">{{cd.sales_quantity}}</td>
+                                    <td class="sales_amount">{{cd.sales_amount|floatformat:2}}</td>
+                                    <td class="purchase_quantity">{{cd.purchase_quantity}}</td>
+                                    <td class="purchase_amount">{{cd.purchase_amount|floatformat:2}}</td>
+
+                                     
+                                    
+                                </tr>
+                                {% endfor %}
+                               
+
+
+                            </tbody>
+                        </table>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="card mb-3 total-row">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Sales Quantity:</h5>
+                                        <p class="card-text" id="total_sales_quantity">{{total_sales_quantity}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3 total-row">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Sales Amount:</h5>
+                                        <p class="card-text" id="total_sales_amount">{{total_sales_amount}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3 total-row">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Purchase Quantity:</h5>
+                                        <p class="card-text" id="total_purchase_quantity">{{total_purchase_quantity}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3 total-row">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Purchase Amount:</h5>
+                                        <p class="card-text" id="total_purchase_amount">{{total_purchase_amount}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </div>
+   
+</div>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.apply-filter').on('click', function () {
+            const $table = $('#myTable');
+            const columnIndex = $(this).closest('th').index();
+            var  filterValue = $(this).siblings('.filter-value').val().trim();
+            document.getElementById("filter").value =filterValue;
+            console.log("=============================+++++++++++++++");
+            console.log(filterValue)
+
+            $table.find('tbody tr').hide(); // Hide all rows
+            console.log("hide");
+            applyEqualToFilter($table, columnIndex, filterValue);
+           
+
+            // Close the filter dropdown
+            // $(this).closest('.filter-dropdown').hide();
+        });
+
+        function applyEqualToFilter($table, columnIndex, filterValue) {
+            console.log("filter");
+            $table.find(`tbody tr td:nth-child(${columnIndex + 1})`).each(function () {
+                const cellValue = $(this).text().trim();
+                if (cellValue === filterValue) {
+                    $(this).parent().show();
+                    console.log(this)
+                    
+                }
+            });
+        }
+
+        $('.clear-filter').on('click', function () {
+            $('#myTable tbody tr').show();
+            $(this).siblings('.filter-value').val('');
+
+            // Close the filter dropdown
+            // $(this).closest('.filter-dropdown').hide();
+        });
+
+        $('.apply-filter').on('click', function () {
+            const $table = $('#myTable1');
+            const columnIndex = $(this).closest('th').index();
+            const filterValue = $(this).siblings('.filter-value').val().trim();
+            console.log("=============================+++++++++++++++");
+            console.log(filterValue)
+
+            $table.find('tbody tr').hide(); // Hide all rows
+            console.log("hide");
+            applyEqualToFilter($table, columnIndex, filterValue);
+
+            // Close the filter dropdown
+            // $(this).closest('.filter-dropdown').hide();
+        });
+
+        function applyEqualToFilter($table, columnIndex, filterValue) {
+            console.log("filter");
+            $table.find(`tbody tr td:nth-child(${columnIndex + 1})`).each(function () {
+                const cellValue = $(this).text().trim();
+                if (cellValue === filterValue) {
+                    $(this).parent().show();
+                    console.log(this)
+                }
+            });
+            calculatetotal()
+        }
+
+        $('.clear-filter').on('click', function () {
+            $('#myTable tbody tr').show();
+            $(this).siblings('.filter-value').val('');
+            window.reload();
+            // Close the filter dropdown
+            // $(this).closest('.filter-dropdown').hide();
+        });
+
+    });
+</script>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<script>
+    function pdfReport() {
+    console.log("myTable1");
+
+    // Use the correct selector to get the element by ID
+    var element = document.getElementById('content-div') 
+
+            var opt =
+            {
+                margin: 0.5,
+                filename: 'item report - party' + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 4 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait', }
+            };
+            html2pdf().set(opt).from(element).save();
+            
+    
+}
+
+
+</script>
+<script>
+    
+    function exportToExcel() {
+    
+        
+        
+    var tableClone = document.querySelector('#myTable').cloneNode(true);
+
+   
+    var excludedElements = tableClone.querySelectorAll('.exclude-export');
+    for (var i = 0; i < excludedElements.length; i++) {
+        excludedElements[i].parentNode.removeChild(excludedElements[i]);
+    }
+
+    var ws = XLSX.utils.table_to_sheet(tableClone);
+
+    var range = XLSX.utils.decode_range(ws['!ref']);
+    for (var C = range.s.c; C <= range.e.c; ++C) {
+        var width = 20;
+        ws['!cols'] = ws['!cols'] || [];
+        ws['!cols'][C] = { wch: width };
+    }
+
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.writeFile(wb, 'Party_item_Report.xlsx');
+}
+
+
+  </script>
+  <script>
+    function printReport(){
+     
+      var printContents = document.getElementById('content-div').innerHTML;
+      
+     
+      var $printerDiv = $('<div class="printContainer"></div>');
+  
+      // Set the inner HTML of the temporary div to the content to be printed
+      $printerDiv.html(printContents); 
+  
+      
+      $('body').append($printerDiv).addClass("printingContent"); 
+      $printerDiv.css({
+      'margin': '20px', // Adjust margins as needed
+      'padding': '20px' // Adjust padding as needed
+  });
+  
+      
+      window.print(); 
+  
+      
+      $printerDiv.remove();
+  
+     
+      $('body').removeClass("printingContent");
+  
+  }
+  </script>
+  
+
+
+  <script>
+    
+   
+    var initialTotals = {
+        total_sales_quantity: 0,
+        total_sales_amount: 0,
+        total_purchase_quantity: 0,
+        total_purchase_amount: 0
+    };
+
+   
+    function calculateTotals() {
+        var totalSalesQuantity = 0;
+        var totalSalesAmount = 0;
+        var totalPurchaseQuantity = 0;
+        var totalPurchaseAmount = 0;
+
+        var visibleRows = document.querySelectorAll('#myTable tbody tr');
+
+        visibleRows.forEach(function(row) {
+            if (row.style.display !== "none") {
+                var salesQuantity = parseInt(row.querySelector('.sales_quantity').textContent) || 0;
+                var salesAmount = parseFloat(row.querySelector('.sales_amount').textContent) || 0;
+                var purchaseQuantity = parseInt(row.querySelector('.purchase_quantity').textContent) || 0;
+                var purchaseAmount = parseFloat(row.querySelector('.purchase_amount').textContent) || 0;
+
+                totalSalesQuantity += salesQuantity;
+                totalSalesAmount += salesAmount;
+                totalPurchaseQuantity += purchaseQuantity;
+                totalPurchaseAmount += purchaseAmount;
+            }
+        });
+
+        
+        updateTotalValues(totalSalesQuantity, totalSalesAmount, totalPurchaseQuantity, totalPurchaseAmount);
+    }
+
+    
+    function updateTotalValues(totalSalesQuantity, totalSalesAmount, totalPurchaseQuantity, totalPurchaseAmount) {
+        document.getElementById('total_sales_quantity').textContent = totalSalesQuantity;
+        document.getElementById('total_sales_amount').textContent = totalSalesAmount.toFixed(2);
+        document.getElementById('total_purchase_quantity').textContent = totalPurchaseQuantity;
+        document.getElementById('total_purchase_amount').textContent = totalPurchaseAmount.toFixed(2);
+    }
+
+   
+    function resetTable() {
+        // Show all rows
+        var visibleRows = document.querySelectorAll('#myTable tbody tr');
+        visibleRows.forEach(function(row) {
+            row.style.display = "";
+        });
+        updateTotalValues(
+            initialTotals.total_sales_quantity,
+            initialTotals.total_sales_amount,
+            initialTotals.total_purchase_quantity,
+            initialTotals.total_purchase_amount
+        );
+    }
+
+    
+    window.onload = function() {
+        
+        initialTotals.total_sales_quantity = parseInt(document.getElementById('total_sales_quantity').textContent) || 0;
+        initialTotals.total_sales_amount = parseFloat(document.getElementById('total_sales_amount').textContent) || 0;
+        initialTotals.total_purchase_quantity = parseInt(document.getElementById('total_purchase_quantity').textContent) || 0;
+        initialTotals.total_purchase_amount = parseFloat(document.getElementById('total_purchase_amount').textContent) || 0;
+        
+        calculateTotals(); 
+    };
+
+    
+    function searchTable() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("search_input1");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+
+   
+    if (filter === "") {
+        resetTable();
+        calculateTotals(); 
+        return;
+    }
+
+    for (i = 0; i < tr.length; i++) {
+        
+        if (tr[i].parentNode.nodeName === "THEAD") {
+            continue;
+        }
+
+
+        var matchFound = false;
+        td = tr[i].getElementsByTagName("td")[0]; 
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase() === filter) {
+                matchFound = true;
+            }
+        }
+        tr[i].style.display = matchFound ? "" : "none";
+    }
+
+    calculateTotals();
+}
+    
+    document.getElementById('search_input1').addEventListener('input', function() {
+        searchTable();
+    });
+</script>
+
+
+
+<script>
+  
+    function details_filter_by_date() {
+        var fromdate = document.getElementById('in1').value || 0;
+        var todate = document.getElementById('in2').value || 0;
+
+        if (todate !== 0 && fromdate !== 0) {
+            document.getElementById('datefilter').innerHTML = fromdate + '  to  ' + todate;
+            $.ajax({
+                type: 'GET',
+                url: '{% url "item_party_searchdate" %}',
+                data: {
+                    fromdate: fromdate,
+                    todate: todate
+                },
+                success: function(data) {
+                    var tbody = document.querySelector('#myTable tbody'); 
+                    console.log(data.c_data);
+                    if (data && data.c_data) {
+                        tbody.innerHTML = ''; // Emptying the table body
+                        for (var itemName in data.c_data) {
+                            if (data.c_data.hasOwnProperty(itemName)) {
+                                var item = data.c_data[itemName];
+                                var newRow = `<tr>
+                                    <td class="" style="color: black;">${itemName}</td>
+                                    <td class="sales-quantity" style="color: black;">${item['sales_quantity']}</td>
+                                    <td class="sales-amount" style="color: black;">${item['sales_amount']}</td>
+                                    <td class="purchase-quantity" style="color: black;">${item['purchase_quantity']}</td>
+                                    <td class="purchase-amount" style="color: black;">${item['purchase_amount']}</td>
+                                </tr>`;
+                                tbody.insertAdjacentHTML('beforeend', newRow);
+                            }
+                        }
+                        
+                        // Calculate totals based on the data received
+                        var totalSalesQuantity = 0;
+                        var totalSalesAmount = 0;
+                        var totalPurchaseQuantity = 0;
+                        var totalPurchaseAmount = 0;
+
+                        for (var itemName in data.c_data) {
+                            if (data.c_data.hasOwnProperty(itemName)) {
+                                var item = data.c_data[itemName];
+                                totalSalesQuantity += parseInt(item['sales_quantity']) || 0;
+                                totalSalesAmount += parseFloat(item['sales_amount']) || 0;
+                                totalPurchaseQuantity += parseInt(item['purchase_quantity']) || 0;
+                                totalPurchaseAmount += parseFloat(item['purchase_amount']) || 0;
+                            }
+                        }
+
+                        // Update total values
+                        updateTotalValues(totalSalesQuantity, totalSalesAmount, totalPurchaseQuantity, totalPurchaseAmount);
+                    } else {
+                        console.log('No data received or invalid format');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        } else {
+            console.log('Enter both dates');
+        }
+    }
+
+</script>
+
+<script>
+    function details_filter_by_party() {
+        var selectedParty = document.getElementById('in3').value || 0;
+
+        if (selectedParty !== 0) {
+            $.ajax({
+                type: 'GET',
+                url: '{% url "item_party_filter" %}',
+                data: {
+                    selectparty: selectedParty
+                },
+                success: function(data) {
+                    var tbody = document.querySelector('#myTable tbody');
+                    console.log(data.c_data);
+                    if (data && data.c_data) {
+                        tbody.innerHTML = ''; 
+                        for (var itemName in data.c_data) {
+                            if (data.c_data.hasOwnProperty(itemName)) {
+                                var item = data.c_data[itemName];
+                                var newRow = `<tr>
+                                    <td class="" style="color: black;">${itemName}</td>
+                                    <td class="sales-quantity" style="color: black;">${item['sales_quantity']}</td>
+                                    <td class="sales-amount" style="color: black;">${item['sales_amount']}</td>
+                                    <td class="purchase-quantity" style="color: black;">${item['purchase_quantity']}</td>
+                                    <td class="purchase-amount" style="color: black;">${item['purchase_amount']}</td>
+                                </tr>`;
+                                tbody.insertAdjacentHTML('beforeend', newRow);
+                            }
+                        }
+
+                        
+                        var totalSalesQuantity = 0;
+                        var totalSalesAmount = 0;
+                        var totalPurchaseQuantity = 0;
+                        var totalPurchaseAmount = 0;
+
+                        for (var itemName in data.c_data) {
+                            if (data.c_data.hasOwnProperty(itemName)) {
+                                var item = data.c_data[itemName];
+                                totalSalesQuantity += parseInt(item['sales_quantity']) || 0;
+                                totalSalesAmount += parseFloat(item['sales_amount']) || 0;
+                                totalPurchaseQuantity += parseInt(item['purchase_quantity']) || 0;
+                                totalPurchaseAmount += parseFloat(item['purchase_amount']) || 0;
+                            }
+                        }
+
+                       
+                        updateTotalValues(totalSalesQuantity, totalSalesAmount, totalPurchaseQuantity, totalPurchaseAmount);
+                    } else {
+                        console.log('No data received or invalid format');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        } else {
+            console.log('Select a party');
+        }
+    }
+</script>
+
+<script>
+    function updateHiddenFields() {
+        document.getElementById('hiddenFromDate').value = document.getElementById('in1').value;
+        document.getElementById('hiddenToDate').value = document.getElementById('in2').value;
+        document.getElementById('hiddenParty').value = document.getElementById('in3').value;
+    }
+    
+    
+    updateHiddenFields();
+    </script>
+

@@ -1,3 +1,4 @@
+#Vyapar
 from . import views
 from django.urls import path,re_path
 from django.conf import settings
@@ -17,12 +18,12 @@ urlpatterns = [
     path('sale_invoices', views.sale_invoices, name='sale_invoices'),
     path('estimate_quotation', views.estimate_quotation, name='estimate_quotation'),
     path('payment_in', views.payment_in, name='payment_in'),
-    path('sale_order', views.sale_order, name='sale_order'),
+    # path('sale_order', views.sale_order, name='sale_order'),
     path('delivery_challan', views.delivery_challan, name='delivery_challan'),
     path('sale_return_cr', views.sale_return_cr, name='sale_return_cr'),
 
     # created by athul
-    path('settings', views.settings, name='settings'),
+    # path('settings', views.settings, name='settings'),
     path('hide_options', views.hide_options, name='hide_options'),
 
     path('staffhome', views.staffhome, name='staffhome'),
@@ -32,8 +33,8 @@ urlpatterns = [
     path('staff_register', views.staff_register, name='staff_register'),
     path('staff_registraction', views.staff_registraction, name='staff_registraction'),
     path('company_reg', views.company_reg, name='company_reg'),
-    path('company_reg2', views.company_reg2, name='company_reg2'),
-    path('add_company', views.add_company, name='add_company'),
+    path('company_reg2/<int:id>', views.company_reg2, name='company_reg2'),
+    path('add_company/<int:id>', views.add_company, name='add_company'),
     path('log_page', views.log_page, name='log_page'),
     path('login', views.login, name='login'),
     path('adminaccept/<id>', views.adminaccept, name='adminaccept'),
@@ -62,9 +63,9 @@ urlpatterns = [
     path('admin_notification', views.admin_notification, name='admin_notification'),
     path('module_updation_details/<mid>', views.module_updation_details, name='module_updation_details'),
     path('module_updation_ok/<mid>', views.module_updation_ok, name='module_updation_ok'),
-    path('staff_profile/<sid>', views.staff_profile, name='staff_profile'),
-    path('editstaff_profile/<sid>', views.editstaff_profile, name='editstaff_profile'),
-    path('editstaff_profile_action/<sid>', views.editstaff_profile_action, name='editstaff_profile_action'),
+    path('staff_profile', views.staff_profile, name='staff_profile'),
+    path('editstaff_profile', views.editstaff_profile, name='editstaff_profile'),
+    path('editstaff_profile_action', views.editstaff_profile_action, name='editstaff_profile_action'),
 
     path('distributor_home', views.distributor_home, name='distributor_home'),
     path('distributor_reg', views.distributor_reg, name='distributor_reg'),
@@ -135,11 +136,19 @@ urlpatterns = [
 
     path('add_parties', views.add_parties, name='add_parties'),
     path('save_parties', views.save_parties, name='save_parties'),
-    path('view_parties', views.view_parties, name='view_parties'),
+    path('view_parties/<int:pk>', views.view_parties, name='view_parties'),
     path('view_party/<int:id>', views.view_party, name='view_party'),
     path('edit_party/<int:id>', views.edit_party, name='edit_party'),
     path('edit_saveparty/<int:id>', views.edit_saveparty, name='edit_saveparty'),
     path('deleteparty/<int:id>', views.deleteparty, name='deleteparty'),
+    path('party_histories/<int:id>', views.party_histories, name='party_histories'),
+    path('import_parties', views.import_parties, name='import_parties'),
+    path('downloadPartySampleImportFile', views.downloadPartySampleImportFile, name='downloadPartySampleImportFile'),
+    path('item_histories/<int:id>', views.item_histories, name='item_histories'),
+    path('add_est_item',views.addEstItem, name='addEstItem'),
+    path('add_est_party',views.addEstParty, name='addEstParty'),
+    path('newPartyCheck',views.newPartyCheck, name = 'newPartyCheck'),
+    path('newItemCheck',views.newItemCheck, name = 'newItemCheck'),
     #End
     
     path('view_purchasebill',views.view_purchasebill,name='view_purchasebill'),
@@ -206,9 +215,437 @@ urlpatterns = [
     path('download_challan_sample_file',views.downloadChallanSampleImportFile, name = 'downloadChallanSampleImportFile'),
     path('challan_bill_pdf_view/<int:id>',views.challanBillPdf, name='challanBillPdf'),
     path('view_challan_bill/<int:id>',views.viewChallan, name='viewChallan'),
-
-
     # ===================================== shemeem - end ==================================================
+    
+    #______________Sales Invoice_________________Antony Tom___________________________
+    path('itemdetailinvoice', views.itemdetailinvoice, name='itemdetailinvoice'),
+    path('add_salesinvoice', views.add_salesinvoice, name='add_salesinvoice'),
+    path('save_sales_invoice', views.save_sales_invoice, name='save_sales_invoice'),
+    path('itemdata_salesinvoice',views.itemdata_salesinvoice,name='itemdata_salesinvoice'),
+    path('itemdata_salesinvoiceedit',views.itemdata_salesinvoiceedit,name='itemdata_salesinvoiceedit'),
+    path('view_salesinvoice',views.view_salesinvoice,name='view_salesinvoice'),
+    path('api/bank-details/<str:bank_name>/',views.get_bank_details, name='get_bank_details'),
+    path('get_total_balance/', views.get_total_balance, name='get_total_balance'),
+    path('edit_salesinvoice/<int:id>/', views.edit_salesinvoice, name='edit_salesinvoice'),
+    path('editsave_salesinvoice/<int:id>/', views.editsave_salesinvoice, name='editsave_salesinvoice'),
+    path('salesinvoice_save_parties', views.salesinvoice_save_parties, name='salesinvoice_save_parties'),
+    path('deletesalesinvoice/<int:id>/', views.deletesalesinvoice, name='deletesalesinvoice'),
+    path('graph_salesinvoice', views.graph_salesinvoice, name='graph_salesinvoice'),
+    path('salesinvoicehistory/<int:id>/', views.salesinvoicehistory, name='salesinvoicehistory'),
+    path('salesinvoice_billtemplate/<int:id>/', views.salesinvoice_billtemplate, name='salesinvoice_billtemplate'),
+    path('importsalesinvoice_excel', views.importsalesinvoice_excel, name='importsalesinvoice_excel'),
+    path('api/profit_loss_data/<int:year>/', views.profit_loss_data, name='profit_loss_data_year'),
+    path('api/party-details/<str:party_name>/',views.party_details, name='party_details'),
+    #End
+    
+    # ========================================   Haripriya B Nair (start) ======================================================
+    path('view_purchasedebit',views.view_purchasedebit,name='view_purchasedebit'),
+    path('add_debitnote',views.add_debitnote,name='add_debitnote'),
+    path('custdata1',views.custdata1,name='custdata1'),
+    path('cust_dropdown1',views.cust_dropdown1,name='cust_dropdown1'),
+    path('savecustomer1',views.savecustomer1,name='savecustomer1'),
+    path('saveitem1',views.saveitem1,name='saveitem1'),
+    path('item_dropdowns',views.item_dropdowns,name='item_dropdowns'),
+    path('itemdetail',views.itemdetail,name='itemdetail'),
+    path('create_debitnotes',views.create_debitnotes,name='create_debitnotes'),
+    path('purchasebilldata',views.purchasebilldata,name='purchasebilldata'),
+    
+    path('bankdata1',views.bankdata1,name='bankdata1'),
+    path('delete_debit/<int:id>',views.delete_debit,name='delete_debit'),
+    path('edit_debitnote/<int:id>',views.edit_debitnote,name='edit_debitnote'),
+    path('update_debitnote/<int:id>',views.update_debitnote,name='update_debitnote'),
+    path('history_debitnote/<int:id>',views.history_debitnote,name='history_debitnote'),
+    path('debthistory',views.debthistory,name='debthistory'),
+    path('import_debitnote',views.import_debitnote,name='import_debitnote'),
+    path('details_debitnote/<int:id>',views.details_debitnote,name='details_debitnote'),
+
+# ========================================   Haripriya B Nair (end) =============
+
+    path('sharedebitToEmail/<int:id>',views.sharedebitToEmail,name='sharedebitToEmail'),
+    
+    path('distributor_notification',views.distributor_notification,name='distributor_notification'),
+    path('distributor_module_updation/<int:mid>',views.distributor_module_updation,name='distributor_module_updation'),
+    path('distributor_module_updation_ok/<int:mid>',views.distributor_module_updation_ok,name='distributor_module_updation_ok'),
+    path('expense',views.expense,name='expense'),
+    path('newexpenses',views.newexpenses,name='newexpenses'),
+    path('partydata',views.partydata,name='partydata'),
+    path('add_party_in_expense',views.add_party_in_expense,name='add_party_in_expense'),
+    path('create_expense_category',views.create_expense_category,name='create_expense_category'),
+    path('create_expense',views.create_expense,name='create_expense'),
+    path('view_expense/<int:eid>',views.view_expense,name='view_expense'),
+    path('expense_details/<int:eid>',views.expense_details,name='expense_details'),
+    path('edit_expense/<int:eid>',views.edit_expense,name='edit_expense'),
+    path('edit_expense_action/<int:eid>',views.edit_expense_action,name='edit_expense_action'),
+    path('delete_expense/<int:eid>',views.delete_expense,name='delete_expense'),
+    path('view_expense/import_expense',views.import_expense,name='import_expense'),
+    
+    path('create_purchaseorder',views.create_purchaseorder,name='create_purchaseorder'),
+    path('edit_purchaseorder/<int:id>',views.edit_purchaseorder,name='edit_purchaseorder'),
+    path('update_purchaseorder/<int:id>',views.update_purchaseorder,name='update_purchaseorder'),
+    path('details_purchaseorder/<int:id>',views.details_purchaseorder,name='details_purchaseorder'),
+    path('delete_purchaseorder/<int:id>',views.delete_purchaseorder,name='delete_purchaseorder'),
+    path('orderhistory',views.orderhistory,name='orderhistory'), 
+    path('convert_to_bill/<int:id>',views.convert_to_bill,name='convert_to_bill'),
+    path('import_purchase_order',views.import_purchase_order,name='import_purchase_order'),  
+    path('history_purchaseorder/<int:id>',views.history_purchaseorder,name='history_purchaseorder'), 
+    
+    #Nsaneen
+    path('sale_order', views.sale_order, name='sale_order'),
+    path('saleorder_create', views.saleorder_create, name='saleorder_create'),
+    path('getparty', views.getparty, name='getparty'),
+    path('getproduct', views.getproduct, name='getproduct'),
+    path('getacc', views.getacc, name='getacc'),
+    path('create_saleorder', views.create_saleorder, name='create_saleorder'),
+    path('saleorder_view/<int:id>', views.saleorder_view, name='saleorder_view'),
+    path('delete_saleorder/<int:id>', views.delete_saleorder, name='delete_saleorder'),
+    path('import_excel', views.import_excel, name='import_excel'),
+    path('add_party', views.add_party, name='add_party'),
+    path('add_item', views.add_item, name='add_item'),
+    path('sales_transaction/<int:id>', views.sales_transaction, name='sales_transaction'),
+    path('saleorder_edit/<int:id>', views.saleorder_edit, name='saleorder_edit'),
+    path('edit_saleorder/<int:id>', views.edit_saleorder, name='edit_saleorder'),
+    path('saleorderto_invoice/<int:id>', views.saleorderto_invoice, name='saleorderto_invoice'),
+    path('saleorder_convert/<int:sid>', views.saleorder_convert, name='saleorder_convert'),
+    #End
+    
+    path('get_bill_date',views.get_bill_date,name='get_bill_date'),
+    
+    #salesinvoiceurl(new)
+    path('item_save_invoice', views.item_save_invoice, name='item_save_invoice'),
+    path('item_invoicedropdown', views.item_invoicedropdown, name='item_invoicedropdown'),
+    #End
+    
+    path('expense_cat_dropdown',views.expense_cat_dropdown,name='expense_cat_dropdown'),
+    
+    # =========== payment out=========== Anuvinda - start =======================================
+     path('view_paymentout',views.view_paymentout,name='view_paymentout'),
+     path('add_paymentout',views.add_paymentout,name='add_paymentout'),
+     path('create_paymentout',views.create_paymentout,name='create_paymentout'),
+     path('delete_paymentout/',views.delete_paymentout,name='delete_paymentout'), 
+     path('details_paymentout/<int:id>/', views.details_paymentout, name='details_paymentout'),
+     path('edit_paymentout/<int:id>/',views.edit_paymentout, name='edit_paymentout'),
+     path('add_pay/',views.add_pay, name='add_pay'),
+     path('create_addpaymentout',views.create_addpaymentout,name='create_addpaymentout'), 
+     path('update_paymentout/<int:id>/', views.update_paymentout, name='update_paymentout'),
+     path('paymentout_history/<int:id>/',views.paymentout_history, name='paymentout_history'),
+     path('send-email/',views.send_email, name='send_email'),
+     path('get_party_details/', views.get_party_details, name='get_party_details'),
+     #End
+     
+     # =====================================gstr-3B gstr9 AKSHAYA ===============================================================
+    
+    path('gstr3b',views.gstr3b, name='gstr3b'),
+    path('sharegstr3BToEmail',views.sharegstr3BToEmail, name='sharegstr3BToEmail'),
+    path('gstr9',views.gstr9, name='gstr9'),
+    path('sharegstr9ToEmail',views.sharegstr9ToEmail, name='sharegstr9ToEmail'),
+    #End
+    
+    #______________Payment In__________________shemeem________________________________
+    path('listout_paymentin',views.paymentIn, name='paymentIn'),
+    path('create_payment_in',views.createPaymentIn,name='createPaymentIn'),
+    path('get_bank_acc_number',views.getBankDetails, name='getBankDetails'),
+    path('create_new_payment_in',views.createNewPaymentIn, name='createNewPaymentIn'),
+    path('delete_payment_in/<int:id>',views.deletePaymentIn, name='deletePaymentIn'),
+    path('payment_trans_history',views.paymentHistory, name = 'paymentHistory'),
+    path('view_payment_in/<int:id>',views.viewPaymentIn, name='viewPaymentIn'),
+    path('share_paymentin_to_email/<int:id>',views.sharePaymentInToEmail,name='sharePaymentInToEmail'),
+    path('edit_payment_in_receipt/<int:id>',views.editPaymentIn, name='editPaymentIn'),
+    path('update_payment_in/<int:id>',views.updatePaymentIn, name='updatePaymentIn'),
+    path('history_payment_in/<int:id>',views.paymentInHistory,name='paymentInHistory'),
+    path('download_payment_sample_file',views.downloadPaymentSampleImportFile, name = 'downloadPaymentSampleImportFile'),
+    path('import_payment_form_excel',views.importPaymentFromExcel, name='importPaymentFromExcel'),
+    
+    #Delivery challan and Estimate urls...
+    path('convert_estimate_to_sales_order/<int:id>',views.convertEstimateToSalesOrder, name='convertEstimateToSalesOrder'),
+    path('save_estimate_to_sales_order/<int:id>',views.saveEstimateToSalesOrder, name='saveEstimateToSalesOrder'),
+    path('convert_estimate_to_invoice/<int:id>',views.convertEstimateToInvoice, name='convertEstimateToInvoice'),
+    path('save_estimate_to_invoice/<int:id>',views.saveEstimateToInvoice, name='saveEstimateToInvoice'),
+    path('convert_challan_to_invoice/<int:id>',views.convertChallanToInvoice, name='convertChallanToInvoice'),
+    path('save_challan_to_invoice/<int:id>',views.saveChallanToInvoice, name='saveChallanToInvoice'),
+
+    #_________________________________________________________________________________
+    
+    path('gstrr2',views.gstrr2,name='gstrr2'),
+    path('gstrnew1',views.gstrnew1,name='gstrnew1'),
+    path('sharepurchaseBillToEmail',views.sharepurchaseBillToEmail,name='sharepurchaseBillToEmail'),
+    path('shareGSTR2purchaseBillToEmail',views.shareGSTR2purchaseBillToEmail,name='shareGSTR2purchaseBillToEmail'),
+    
+    path('shareinvoiceToEmail/<int:id>/', views.shareinvoiceToEmail, name='shareinvoiceToEmail'),
+    path('order_to_bill/<int:id>',views.order_to_bill,name='order_to_bill'),
+    
+    path('sales_report',views.sales_report,name='sales_report'),
+    path('purchase_report',views.purchase_report,name='purchase_report'),
+    path('send_sale_report_via_mail',views.send_sale_report_via_mail,name='send_sale_report_via_mail'),
+    path('send_purchase_report_via_mail',views.send_purchase_report_via_mail,name='send_purchase_report_via_mail'),
+    path('day_book_report',views.day_book_report,name='day_book_report'),
+    
+    path('loan_accounts',views.loan_accounts,name='loan_accounts'),
+
+    path('add_loan_accounts',views.add_loan_accounts,name='add_loan_accounts'),
+    path('add_loan_accounts_function',views.add_loan_accounts_function,name='add_loan_accounts_function'),
+    path('edit_loan_page/<int:eid>',views.edit_loan_page,name='edit_loan_page'),
+    path('make_payment/<int:eid>',views.make_payment,name='make_payment'),
+
+    path('edit_loan_page_function/<int:eid>',views.edit_loan_page_function,name='edit_loan_page_function'),
+
+    path('loan_accounts_view_page/<int:eid>',views.loan_accounts_view_page,name='loan_accounts_view_page'),
+
+    path('import-loan-accounts/', views.import_loan_accounts, name='import_loan_accounts'),
+    
+    path('ShareLoanStatementMail/<int:eid>', views.ShareLoanStatementMail, name='ShareLoanStatementMail'),
+ 
+
+    path('additional_loan',views.additional_loan,name='additional_loan'),
+
+    path('loan_account_history/<int:id>/',views.loan_account_history,name='loan_account_history'),
+
+    
+    path('LoanAccountDelete/<int:id>', views.LoanAccountDelete, name='LoanAccountDelete'),
+    
+    path('create_sale', views.create_sale, name='create_sale'),
+    path('new_creditnote_item', views.new_creditnote_item, name='new_creditnote_item'),
+    path('get_hsn_for_item',views.get_hsn_for_item,name='get_hsn_for_item'),
+    path('get_party_number',views.get_party_number,name='get_party_number'),
+   
+    path('creditnote_list',views.creditnote_list,name='creditnote_list'),
+    path('party_dropdown',views.party_dropdown,name='party_dropdown'),
+    path('saveparty',views.saveparty,name='saveparty'),
+    path('credit_bankdetails',views.credit_bankdetails,name='credit_bankdetails'),
+    path('add_creditnote',views.add_creditnote,name='add_creditnote'),
+    path('detail_creditnote/<int:id>/',views.detail_creditnote,name='detail_creditnote'),
+   
+    path('import_creditnote',views.import_creditnote,name='import_creditnote'),
+    path('delete_CreditNote/<int:id>/', views.delete_CreditNote, name='delete_CreditNote'),
+    path('creditnote_item_unit',views.creditnote_item_unit,name='creditnote_item_unit'),
+    path('edit_creditnote/<int:id>/',views.edit_creditnote,name='edit_creditnote'),
+    path('salesinvoicedata',views.salesinvoicedata,name='salesinvoicedata'),
+    
+    path('update_creditnote/<int:id>/',views.update_creditnote,name='update_creditnote'),
+    path('history_creditnote/<int:id>',views.history_creditnote,name='history_creditnote'),
+    path('credititemdetails',views.credititemdetails,name='credititemdetails'),
+    path('creditnote_item_dropdown',views.creditnote_item_dropdown,name='creditnote_item_dropdown'),
+    path('sharecreditnoteToEmail/<int:id>',views.sharecreditnoteToEmail,name='sharecreditnoteToEmail'),
+    
+    path('additional_loan_function/<int:eid>', views.additional_loan_function, name='additional_loan_function'),
+    
+    path('email_saleorder/<int:id>', views.email_saleorder, name='email_saleorder'),
+    
+    path('purchasefilterbyDate',views.purchasefilterbyDate,name='purchasefilterbyDate'),
+    path('purchasefilter',views.purchasefilter,name='purchasefilter'),
+    
+    path('allparties',views.allparties,name='allparties'),
+    path('sale_purchaseby_party',views.sale_purchaseby_party,name='sale_purchaseby_party'),
+    path('sale_order_item',views.sale_order_item,name='sale_order_item'),
+    path('sale_purchaseby_party_filter',views.sale_purchaseby_party_filter,name='sale_purchaseby_party_filter'),
+    path('sale_order_item_filter',views.sale_order_item_filter,name='sale_order_item_filter'),
+    path('sharesalepurchasebypartyToEmail',views.sharesalepurchasebypartyToEmail,name='sharesalepurchasebypartyToEmail'),
+    path('sharesaleorderitemToEmail',views.sharesaleorderitemToEmail,name='sharesaleorderitemToEmail'),
+    path('shareallpartiesToEmail',views.shareallpartiesToEmail,name='shareallpartiesToEmail'),
+    
+    path('Expense_history/<int:id>',views.Expense_history,name='Expense_history'),
+    
+    path('get_Invoice_date',views.get_Invoice_date,name='get_Invoice_date'),
+    
+    path('ForId/<int:id>', views.ForId, name='ForId'), 
+    path('check_account_name_availability', views.check_account_name_availability, name='check_account_name_availability'),
+    path('check_account_number_availability', views.check_account_number_availability, name='check_account_number_availability'),
+    
+    path('ExpenseEmail/<int:id>',views.ExpenseEmail,name='ExpenseEmail'),
+    
+    path('Distributor_clients',views.Distributor_clients,name='Distributor_clients'),
+    path('Dclients_list/<int:id>',views.Dclients_list,name='Dclients_list'),
+    path('Dclient_Overview/<int:id>',views.Dclient_Overview,name='Dclient_Overview'),
+    
+    path('Edit_Dprofile',views.Edit_Dprofile,name='Edit_Dprofile'),
+    path('Edit_Dprofile_Action',views.Edit_Dprofile_Action,name='Edit_Dprofile_Action'),
+    
+    path('DChange_payment_terms', views.DChange_payment_terms, name='DChange_payment_terms'),
+    path('Admin_Accept_payment_term/<int:id>', views.Admin_Accept_payment_term, name='Admin_Accept_payment_term'),
+    path('Admin_Reject_payment_term/<int:id>', views.Admin_Reject_payment_term, name='Admin_Reject_payment_term'),
+    path('Com_Change_payment_terms', views.Com_Change_payment_terms, name='Com_Change_payment_terms'),
+    path('Admin_Reject_modules_list/<int:id>', views.Admin_Reject_modules_list, name='Admin_Reject_modules_list'),
+    path('Distributor_Reject_modules_list/<int:id>', views.Distributor_Reject_modules_list, name='Distributor_Reject_modules_list'),
+    path('Distributor_Accept_payment_term/<int:id>', views.Distributor_Accept_payment_term, name='Distributor_Accept_payment_term'),
+    path('Distributor_Reject_payment_term/<int:id>', views.Distributor_Reject_payment_term, name='Distributor_Reject_payment_term'),
+    path('admin_remove_payment_terms/<int:id>', views.admin_remove_payment_terms, name='admin_remove_payment_terms'),
+    path('distributor_remove_company/<int:id>', views.distributor_remove_company, name='distributor_remove_company'),
+    path('Admin_remove_distributor/<int:id>', views.Admin_remove_distributor, name='Admin_remove_distributor'),
+    path('Admin_remove_clients/<int:id>', views.Admin_remove_clients, name='Admin_remove_clients'),
+    path('company_remove_staffs/<int:id>', views.company_remove_staffs, name='company_remove_staffs'),
+    path('com_notification', views.com_notification, name='com_notification'),
+    path('wrong_Page', views.wrong_Page, name='wrong_Page'),
+    path('Restart_payment_terms', views.Restart_payment_terms, name='Restart_payment_terms'),
+    
+    path('Intrest', views.Intrest, name='Intrest'),
+    path('NotIntrest', views.NotIntrest, name='NotIntrest'),
+    path('Intrested_clients', views.Intrested_clients, name='Intrested_clients'),
+    path('NotIntrested_clients', views.NotIntrested_clients, name='NotIntrested_clients'),
+    
+    # ===============GOKUL KRISHNA UR START =============
+
+    path('loan_account_transaction_edit_page/<int:id>',views.loan_account_transaction_edit_page,name='loan_account_transaction_edit_page'),
+    path('loan_account_transaction_edit_function/<int:id>',views.loan_account_transaction_edit_function,name='loan_account_transaction_edit_function'),
+    path('TransactionDelete/<int:id>',views.TransactionDelete,name='TransactionDelete'),
+    path('loan_account_transaction_history/<int:id>',views.loan_account_transaction_history,name='loan_account_transaction_history'),
+    
+    # ===============GOKUL KRISHNA UR END =============
+    
+    path('check_account_availability/', views.check_account_availability, name='check_account_availability'), 
+    
+    path('sharedeliverychallanEmail/<int:id>',views.sharedeliverychallanEmail,name='sharedeliverychallanEmail'),
+    path('item_unit_create_salesinvoice',views.item_unit_create_salesinvoice,name='item_unit_create_salesinvoice'),
+    path('item_unit_create_salesorder',views.item_unit_create_salesorder,name='item_unit_create_salesorder'),
+    path('item_saleorderdropdown',views.item_saleorderdropdown,name='item_saleorderdropdown'),
+    path('item_unit_create_deliverychallan',views.item_unit_create_deliverychallan,name="item_unit_create_deliverychallan"),
+    path('importsalesorderFromExcel',views.importsalesorderFromExcel,name="importsalesorderFromExcel"),
+
+    path('get_party_list',views.get_party_list,name='get_party_list'),
+    path('get_Party_Details',views.get_Party_Details,name='get_Party_Details'),
+    path('get_party_list_dropdown',views.get_party_list_dropdown,name='get_party_list_dropdown'),
+    path('getparty_salesinvoice',views.getparty_salesinvoice,name='getparty_salesinvoice'),
+    path('downloadsalesorderSampleImportFile',views.downloadsalesorderSampleImportFile,name='downloadsalesorderSampleImportFile'),
+    # sumayya
+    path('purchasebill_checkitem', views.purchasebill_checkitem, name='purchasebill_checkitem'),
+    path('purchasebill_checkHSN', views.purchasebill_checkHSN, name='purchasebill_checkHSN'),
+    path('pbillEmail/<int:id>', views.pbillEmail, name='pbillEmail'),
+    path('pOrderEmail/<int:id>', views.pOrderEmail, name='pOrderEmail'),
+    #End
+    #haripriya
+    path('view_cashinhand',views.view_cashinhand,name='view_cashinhand'),
+    path('load_add_cashinhand',views.load_add_cashinhand,name='load_add_cashinhand'),
+    path('save_cashinhand',views.save_cashinhand,name='save_cashinhand'),
+    path('delete_cashinhand/<int:id>',views.delete_cashinhand,name='delete_cashinhand'), 
+    path('edit_cashinhand/<int:id>',views.edit_cashinhand,name='edit_cashinhand'), 
+    path('update_cashinhand/<int:id>',views.update_cashinhand,name='update_cashinhand'), 
+    path('history_cashinhand/<int:id>',views.history_cashinhand,name='history_cashinhand'), 
+    path('cashinhand_statement',views.cashinhand_statement,name='cashinhand_statement'),
+    path('vayapar_cashInHandStatementPdf',views.vayapar_cashInHandStatementPdf,name='vayapar_cashInHandStatementPdf'),
+    path('cashinhandEmail',views.cashinhandEmail,name='cashinhandEmail'),
+    path('cashInHandGraph/<str:period>',views.cashInHandGraph, name='cashInHandGraph'),
+    path('import_cashinhand',views.import_cashinhand,name='import_cashinhand'),
+    #End
+    path('import_items', views.import_items, name='import_items'),
+    path('downloadItemSampleImportFile', views.downloadItemSampleImportFile, name='downloadItemSampleImportFile'),
+    #sruthi
+    path('upilist', views.upilist, name='upilist'),
+    path('upistatement', views.upistatement, name='upistatement'),
+    path('cheque_list', views.cheque_list, name='cheque_list'),
+    path('cheque_statement', views.cheque_statement, name='cheque_statement'),
+    path('company/chequeEmail', views.chequeEmail, name='chequeEmail'),
+    path('company/upiEmail', views.upiEmail, name='upiEmail'),
+    #end
+    path('purchasebill_checkgstin', views.purchasebill_checkgstin, name='purchasebill_checkgstin'),
+    path('purchasebill_checkgphn', views.purchasebill_checkgphn, name='purchasebill_checkgphn'),
+    
+    path('get_available_invoices/', views.get_available_invoices, name='get_available_invoices'),
+    #---------------- Low Stock summary Report - Ginto Shaji - Start-------------------->
+    path('Low_stock_report', views.Low_stock_report, name='Low_stock_report'),
+    path('email_lowstock', views.email_lowstock, name='email_lowstock'),
+    #---------------- Low Stock summary Report - Ginto Shaji - end-------------------->
+    
+    path('stock_details', views.stock_details, name='stock_details'),
+    path('stock_details_date_filter', views.stock_details_date_filter, name='stock_details_date_filter'),
+    path('sendEmail_stock_details', views.sendEmail_stock_details, name='sendEmail_stock_details'),
+    
+    path('sales_invoice_report',views.sales_invoice_report,name='sales_invoice_report'),
+    path('send_sales_report_via_mail',views.send_sales_report_via_mail,name='send_sales_report_via_mail'),
+    path('graph_sales',views.graph_sales,name='graph_sales'),
+    
+    path('all_transactions', views.all_transactions, name='all_transactions'),
+    path('all_transactions_date_filter', views.all_transactions_date_filter, name='all_transactions_date_filter'),
+    path('sendEmail_all_transactions', views.sendEmail_all_transactions, name='sendEmail_all_transactions'),
+    
+    path('loan_account_report', views.loan_account_report, name='loan_account_report'),
+    path('loan_account_report_via_mail', views.loan_account_report_via_mail, name='loan_account_report_via_mail'),
+    #---------------- Party Report By Item - Ginto Shaji - Start-------------------->
+    path('Party_Report_By_Item', views.Party_Report_By_Item, name='Party_Report_By_Item'),
+    path('email_Party_Report_Item', views.email_Party_Report_Item, name='email_Party_Report_Item'),
+    #---------------- Party Report By Item - Ginto Shaji - end--------------------> 
+    
+    path('party_statement', views.party_statement, name='party_statement'),
+    path('party_statement_date_filter', views.party_statement_date_filter, name='party_statement_date_filter'),
+    path('sendEmail_party_statement', views.sendEmail_party_statement, name='sendEmail_party_statement'),
+    
+    path('discount_report',views.discount_report,name='discount_report'),
+    path('send_discount_report_via_mail',views.send_discount_report_via_mail,name='send_discount_report_via_mail'),
+    
+    # ashikhvu
+    path('bank_statement_report', views.bank_statement_report, name='bank_statement_report'),
+    path('bank_statement_report_send_mail', views.bank_statement_report_send_mail, name='bank_statement_report_send_mail'),
+    #End
+    #Meenu shaju -----------------party Report----
+    path('item_report_party',views.item_report_party,name='item_report_party'),
+    path('item_party_searchdate',views.item_party_searchdate,name='item_party_searchdate'),
+    path('item_party_filter',views.item_party_filter,name='item_party_filter'),
+    path('itemReport_mail',views.itemReport_mail,name='itemReport_mail'),
+    #End
+    path('stock_summary', views.stock_summary, name='stock_summary'),
+    path('stock_summary_date_filter', views.stock_summary_date_filter, name='stock_summary_date_filter'),
+    path('sendEmail_stock_summary', views.sendEmail_stock_summary, name='sendEmail_stock_summary'),
+    
+    # ashikh
+    path('day_book_report_send_mail', views.day_book_report_send_mail, name='day_book_report_send_mail'),
+    path('gstrnew1_pdf',views.gstrnew1_pdf,name='gstrnew1_pdf'),
+    path('gstrnew2_pdf',views.gstrnew2_pdf,name='gstrnew2_pdf'),
+    #End
+    # Purchase Order Details
+    path('purchase_order_details_report',views.purchase_order_details_report,name='purchase_order_details_report'),
+    path('purchase_order_details_mail',views.purchase_order_details_mail,name='purchase_order_details_mail'),
+    #End
+    path('expense_report',views.expense_report,name='expense_report'),
+    path('send_estimate_via_mail',views.send_estimate_via_mail,name='send_estimate_via_mail'),
+    
+    #---------------- Purchase Order Item - Aravind P -------------------> 
+    path('purchase_order_item',views.purchase_order_item,name='purchase_order_item'),
+    path('sharepurchaseorderitemToEmail/', views.sharepurchaseorderitemToEmail, name='sharepurchaseorderitemToEmail'),
+    #---------------- END -------------------> 
+    # trial balance
+    path('trial_balance', views.trial_balance, name='trial_balance'),
+    path('trial_balance_date_filter', views.trial_balance_date_filter, name='trial_balance_date_filter'),
+    path('sendEmail_trial_balance', views.sendEmail_trial_balance, name='sendEmail_trial_balance'),
+    #End
+    path('gstr2new1_pdf',views.gstr2new1_pdf,name='gstr2new1_pdf'),
+    path('gstr2new2_pdf',views.gstr2new2_pdf,name='gstr2new2_pdf'),
+    path('sales_or_purchase_report_by_item',views.sales_or_purchase_report_by_item,name='sales_or_purchase_report_by_item'), 
+    path('sales_or_purchase_report_by_item_send_mail',views.sales_or_purchase_report_by_item_send_mail,name='sales_or_purchase_report_by_item_send_mail'),
+    
+    path('outstanding_receivable',views.outstanding_receivable,name='outstanding_receivable'),
+    path('send_receivable_report_via_mail/',views.send_receivable_report_via_mail,name='send_receivable_report_via_mail'),
+    
+    path('sales_summary/',views.sales_summary,name='sales_summary'),
+    path('send_hsn_report_via_mail/',views.send_hsn_report_via_mail,name='send_hsn_report_via_mail'),
+    
+    path('cashflow_report',views.cashflow_report,name='cashflow_report'),
+    path('send_cash_flow_report_via_mail',views.send_cash_flow_report_via_mail,name='send_cash_flow_report_via_mail'),
+    
+    path('outstanding_payables',views.outstanding_payables, name='outstanding_payables'),
+    path('send_report_via_mail',views.send_report_via_mail,name='send_report_via_mail'),
+    
+    path('check_module_status', views.check_module_status, name='check_module_status'),
+    path('check_term_status', views.check_term_status, name='check_term_status'),
+    path('Term_Extension', views.Term_Extension, name='Term_Extension'),
+    path('Intrested_Company', views.Intrested_Company, name='Intrested_Company'),
+    path('Admin_Accept_term_and_module/<id>', views.Admin_Accept_term_and_module, name='Admin_Accept_term_and_module'),
+    path('Admin_Reject_term_and_module/<id>', views.Admin_Reject_term_and_module, name='Admin_Reject_term_and_module'),
+    path('updates_admin', views.updates_admin, name='updates_admin'),
+    path('list_admin_notification/<int:num>', views.list_admin_notification, name='list_admin_notification'),
+    
+    path('get_purchase_bills/<int:party_id>/', views.get_purchase_bills, name='get_purchase_bills'),
+    path('get_purchase_bill_details/<str:bill_no>/', views.get_purchase_bill_details, name='get_purchase_bill_details'),
+    path('get_sale_invoices/<int:party_id>/', views.get_sale_invoices, name='get_sale_invoices'),
+    path('get_sale_invoice_details/<str:inv_no>/', views.get_sale_invoice_details, name='get_sale_invoice_details'),
+    
+    path('profit_loss',views.profit_loss,name='profit_loss'),
+    path('profit_loss_vertical',views.profit_loss_vertical,name='profit_loss_vertical'),
+    path('profit_loss_mail',views.profit_loss_mail,name='profit_loss_mail'),
+    path('profit_loss_mail_h',views.profit_loss_mail_h,name='profit_loss_mail_h'),
+    
+    #---------------- Balance Sheet - Megha O V -------------------> 
+    path('balance_sheet_report',views.balance_sheet_report,name='balance_sheet_report'),
+    path('vertical_balancesheet',views.vertical_balancesheet,name='vertical_balancesheet'),
+    path('balancesheet_mail_horizontal',views.balancesheet_mail_horizontal,name='balancesheet_mail_horizontal'),
+    path('balancesheet_mail_vertical',views.balancesheet_mail_vertical,name='balancesheet_mail_vertical'),
+    #End
     
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     

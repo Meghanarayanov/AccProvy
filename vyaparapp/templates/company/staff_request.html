@@ -19,12 +19,13 @@
   <div class="container-fluid">
 
   
-
+    {% if data %}
      <!-- <h3 class="text-center"><b style="color: rgb(158, 213, 245);text-shadow: 2px 2px 4px #000000; margin-bottom: 40px;">All Company</b></h3> -->
       <div style="overflow-x:auto;">  
         <table class="table table-hover  mt-5 " style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
             <thead>
               <tr>
+                <th></th>
                 <th scope="col" style="color: black;"><b>ID</b></th>
                 <th scope="col" style="color: black;"><b>Name</b></th>
                 <th scope="col" style="color: black;"><b>Email</b></th>
@@ -38,7 +39,8 @@
             <tbody>
                 {% for a in data %}
               <tr>
-                <td>{{a.id}}</th>
+                <td></td>
+                <td>{{forloop.counter}}</th>
                 <td> <b><a href="" style="color: black;">{{a.first_name}} {{a.last_name}}</a></b></td>
                 <td>{{a.email}}</td>
                 <td>{{a.contact}}</td>
@@ -50,6 +52,10 @@
             </tbody>
           </table> 
         </div>
+        {% else %}
+
+            <center><img src="{% static 'images\no-data-file.png' %}" alt="" class="mt-5 pt-5"></center>
+            {% endif %}
 
   </div>
 </div>

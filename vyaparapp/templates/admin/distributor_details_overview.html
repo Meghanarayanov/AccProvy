@@ -30,7 +30,7 @@
                     <img src="{% static 'assets/images/profile/user-1.jpg' %}" width="20%" wi class="img-thumbnail">
                     {% endif %}
                 </center>
-                <h3 class="h3 text-center"><b>{{data.user.first_name}} {{data.user.last_name}}</b></h3>
+                <h3 class="h3 text-center" style="text-transform: uppercase;"><b>{{data.user.first_name}} {{data.user.last_name}}</b></h3>
 
                 <hr>
                 
@@ -90,7 +90,7 @@
                 <hr>
                 
                 <center>
-                    <a href="" class="btn btn-danger mb-5"  style="width: 30%;"><b>Cancel Contract</b></a>
+                    <a href="{% url 'Admin_remove_distributor' data.id %}" class="btn btn-danger mb-5"  style="width: 30%;"><b>Cancel Contract</b></a>
                 </center>
                 
                         

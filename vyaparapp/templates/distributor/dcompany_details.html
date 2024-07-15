@@ -17,7 +17,7 @@
   <div class="container-fluid">
 
   
-
+ {% if data %}
      <!-- <h3 class="text-center"><b style="color: rgb(158, 213, 245);text-shadow: 2px 2px 4px #000000; margin-bottom: 40px;">All Company</b></h3> -->
       <div style="overflow-x:auto;">  
         <table class="table table-hover  mt-5 " style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
@@ -37,19 +37,30 @@
             <tbody>
                 {% for a in data %}
               <tr>
-                <td>{{a.id}}</th>
+                <td>{{forloop.counter}}</th>
                 <td> <b><a href="{% url 'dcompany_details_overview' a.id %}" style="color: black;">{{a.company_name}} </a></b></td>
                 <td>{{a.user.email}}</td>
                 <td>{{a.contact}}</td>
-                <td>{{a.dateperiod.payment_terms_number}} {{a.dateperiod.payment_terms_value}}</td>
+                <td>
+                  {% if a.dateperiod %}
+                  {{a.dateperiod.payment_terms_number}} {{a.dateperiod.payment_terms_value}}
+                  
+                  {% else %}
+                  <b style="color: green;">1 Month Trial</b>
+                  {% endif %}
+                </td>
                 <td>{{a.End_date}}</td>
                 <td>
-                <a href="" class="btn btn-danger m-1"><b>Cancel Contract</b></a></td>
+                <a href="{% url 'distributor_remove_company' a.id %}" class="btn btn-danger m-1"><b>Cancel Contract</b></a></td>
               </tr>
               {% endfor %}
             </tbody>
           </table> 
         </div>
+        {% else %}
+
+            <center><img src="{% static 'images\no-data-file.png' %}" alt="" class="mt-5 pt-5"></center>
+            {% endif %}
 
   </div>
 </div>

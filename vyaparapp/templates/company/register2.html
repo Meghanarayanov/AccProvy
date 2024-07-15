@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VYAPAR</title>
+    <title>AccProVy</title>
   <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/favicon.png' %}" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -19,23 +19,31 @@
             border: 1px solid gray;
 
         }
+        
 
         @media (max-width:768px) {
             #h1 {
-                font-size: 20px;
-                margin-top: 10px !important;
+                font-size: 22px;
+                margin-top: 20px !important;
+                margin-right: 15px !important;
+                font-weight: bold !important;
+                margin-bottom: 10px !important;
+               
             }
 
             .main {
                 padding: 0px !important;
                 margin: 0px !important;
-                margin-left: 40px !important;
+                margin-left: 15px !important;
+                width: 100% !important;
+                margin-right:0px !important;
 
             }
 
             #btn1 {
                 width: 50% !important;
                 margin-bottom: 20px !important;
+                margin-top: 30px !important;
 
             }
 
@@ -43,13 +51,16 @@
                 border-bottom-left-radius: 20px !important;
                 border-top-right-radius: 0px !important;
             }
+            .img-fluid{
+                margin-top: 20px !important;
+            }
 
         }
     </style>
 </head>
 
 <body style="background-color: #455a81;padding-bottom: 20px;">
-    <div class="main m-5 p-5 pt-1 mt-1" style="padding-right: 20px;padding-bottom: 20px;">
+    <div class="main ml-5 mr-5 p-5 pt-1 mt-1" style="padding-right: 20px;padding-bottom: 20px;">
         <h1 class="text-center" id="h1"
             style="color: rgb(255, 255, 255);text-shadow: 2px 2px 4px #000000; margin-bottom: 40px;">COMPANY
             REGISTERATION
@@ -66,12 +77,13 @@
                 style="border-right:1px solid black ;border-bottom: 1px solid black;">
                 <div class="img mt-5">
                     <center>
-                        <img src="{% static 'images/reg1.webp' %}" alt="" class="img-fluid " style="margin-top: 100px;">
-                        <button type="button" class="btn btn-outline-dark " id="btn1"
-                            style="width: 30%;padding: 10px;background-color: red;border-radius: 20px;margin-top: 120px;"><a
+                        
+                        <img src="{% static 'images/reg1.webp' %}" alt="" class="img-fluid " style="margin-top: 20px;">
+                        <!-- <button type="button" class="btn btn-outline-dark " id="btn1"
+                            style="width: 30%;padding: 10px;background-color: red;border-radius: 20px;margin-top: 100px;"><a
                                 href="javascript:history.go(-1);" class="text-white" style="text-decoration: none;">
                                 <b>
-                                    <<< Previous</b></a></button>
+                                    <<< Previous</b></a></button> -->
                     </center>
                 </div>
             </div>
@@ -79,7 +91,7 @@
                 style="background-color: rgb(194, 222, 233);border-radius: 20px;border-bottom-left-radius: 0px;border-top-left-radius: 0px;">
                 <div class="form-box px-2 py-2 align-item-center">
                     <div class="container-fluid">
-                        <form id="form" class="" method="post" action="{% url 'add_company' %}"
+                        <form id="form" class="" method="post" action="{% url 'add_company' data.id %}"
                             enctype="multipart/form-data">
                             <h3 class="text-center mb-5"
                                 style="color: rgb(255, 255, 255);text-shadow: 2px 2px 4px #000000;font-weight: bold;">
@@ -92,8 +104,8 @@
                                 <input type="text" id="cname" name="cname" class="form-control"
                                     placeholder="enter company name" required><br>
 
-                                <input type="text" id="email" name="email" class="form-control"
-                                    placeholder="email id (same as Previous page)" required><br>
+                                <!-- <input type="text" id="email" name="email" class="form-control"
+                                    placeholder="email id (same as Previous page)" required><br> -->
 
 
                                 <input type="text" id="address" name="address" class="form-control"
@@ -106,7 +118,7 @@
 
 
 
-                                <select type="text" class="form-control mt-2 mb-4" id="state" name="state">
+                                <select type="text" class="form-control mt-2 mb-4" id="state" name="state" required>
                                     <option value="" selected>Choose State</option>
                                     <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
                                     <option value="Andhra Predhesh">Andhra Predhesh</option>
@@ -161,7 +173,7 @@
 
 
                                 <select class="form-control mt-4 mb-4" name="gsttype" id="gsttype"
-                                    onclick="hidinput('hello', this),disinput('hai', this) ,disinput2('hai1', this)">
+                                    onclick="hidinput('hello', this),disinput('hai', this) ,disinput2('hai1', this)" required>
                                     <option selected disabled value="">Select GST Type</option>
                                     <option value="Registered Business - Regular">Registered Business - Regular
                                         <span><i>(Business that is registered under gst)</i></span>
@@ -192,7 +204,7 @@
                                     <div class="col"> -->
                                 <select name="select" id="select" class="form-control" required>
                                     <option value="">Choose Payment terms</option>
-
+                                    <option value="Trial" style="color: green;font-weight: bold;">1 Month Free</option>
                                     {% for t in terms %}
                                     <option value="{{t.id}}" data-terms="{{ t.id}}">{{t.payment_terms_number}}
                                         {{t.payment_terms_value}}</option>

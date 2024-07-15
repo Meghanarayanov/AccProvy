@@ -137,8 +137,15 @@
                         <h5 class="h5"><b style="margin-right: 10px;">-> </b> Payment Terms </h5>
                     </div>
                     <div class="col">
-                        <h4 class="h4"> <b>: {{company.dateperiod.payment_terms_number}}
-                                {{company.dateperiod.payment_terms_value}}</b></h4>
+                        <h4 class="h4"> <b>: 
+                            {% if company.dateperiod %}
+                            {{company.dateperiod.payment_terms_number}}
+                                {{company.dateperiod.payment_terms_value}}</b>
+                            
+                            {% else %}
+                            <b style="color: green;">1 Month Trial</b>
+                                {% endif %}
+                            </h4>
                     </div>
                 </div>
                 <div class="row p-5 pt-3 pb-3">

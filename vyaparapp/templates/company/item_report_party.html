@@ -1,0 +1,861 @@
+{% extends 'company/src/html/base.html' %}
+{% block content %}
+{% load static %}
+{% load social_share %}
+
+<!---------------------------------------------script----------------------------------------->
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link href='https://unpkg.com/css.gg@2.0.0/icons/css/trash.css' rel='stylesheet'>
+<script src="https://cdn.jsdelivr.net/bootstrap.datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+
+
+
+
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js" integrity="sha512-8+n4PSpp8TLHbSf28qpjRfu51IuWuJZdemtTC1EKCHsZmWi2O821UEdt6S3l4+cHyUQhU8uiAAUeVI1MUiFATA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!----------------------------------------------script--------------------------------------------->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+<style>
+    #myTable tr:nth-child(odd) {
+    background-color: #f2f2f2; 
+}
+     @media print{
+        body{
+            visibility: hidden !important; /* hide everything in body when in print mode*/
+        }
+        .printContainer {
+            visibility: visible !important; /* Override the rule above to only show the printables*/
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+        } 
+        
+    }
+    p{
+        font-size: 18px;
+        
+    }
+    th{
+        color: rgb(12, 79, 234);
+    }
+   
+ 
+
+
+ 
+</style>
+
+
+<div class="body-wrapper">
+    <div class="container-fluid">
+
+
+       
+        <div class="col-sm-12 col-lg-12 " >
+            <div id="item_get_detail_target">
+                
+                <div class="row m-2" style="height:20%">
+                    <div class="card bg-light bs p-3 mb-3">
+                        <div class="card-group w-100 mx-auto d-block"> 
+                            <h2 style="color:red; text-align: center;">{{staff.company.company_name}}</h2>
+                        <h4 style="text-align: center;">Item Report - Party </h4>
+                        <h6 style="text-align: center;" id="datefilter" ></h6>
+                        {% for message in messages %}
+                        <h5>
+                          <div class="alert  message text-center" style="color: black;" id="alert_danger">
+                            {{ message }}
+                            <a type="button" id="alert_close" class="close" data-dismiss="alert" aria-label="Close" style="float: right;">
+                                <span aria-hidden="true" style="font-size: large; color: #68020F;">&times;</span>
+                            </a>
+                          </div>
+                        </h5>
+                        {% endfor %}
+
+                   
+                        <h5 style="text-align: center;">
+                            <span id="s1date" style="color:black; text-align: center;"></span>
+                            <span id="e1date" style="color:black; text-align: center;"></span></h5>
+                        
+
+                        </div>
+                        <div class="bar d-flex justify-content-between">
+                            <div class=" card-group p-0 bg-light bs ">
+                                
+                                
+                                <div class="px-2 w-50">
+                                   
+                                    <label style="text-align:left;color: black; ">From</label><br>
+                                    <input name="FromDate" class="inputdate form-control" type="date" id="in1" onchange="details_filter_by_date()">
+                                </div>
+                                <div class="px-2 w-50">
+                                    <label style="text-align:left;color: black; ">To</label><br>
+                                    <input name="ToDate" class="inputdate form-control" type="date" id="in2" onchange="details_filter_by_date()">
+                                </div>
+                                  <div class="px-2 w-50">
+                                    <label style="text-align:left;color: black; ">Party</label><br>
+                                    <select name="party" class="inputdate form-control" id="in3" onchange="details_filter_by_party()">
+                                        <option value="party1">Select Party</option>
+                                        {% for i in party %}
+                                        <option value="{{i.id}}">{{i.party_name}}</option>
+                                       {% endfor %}
+                                        <!-- Add more options as needed -->
+                                    </select>
+                                    <button type="submit" id="hiddenSubmitButton" style="display: none;"></button>
+                               
+                                </div>
+
+
+                               
+
+                            </div>
+                            <div class=" card-group">
+                                <div class="right mt-3">
+                                    <a class="btn " title="export to excel"onclick="exportToExcel()">
+                                        <span><img width="25px"src="{% static 'assets/excel2.png' %}" alt="no img"></span>
+                                    </a>
+                                    <a class="btn " title="export to PDF"onclick="pdfReport()">
+                                        <span><img width="25px"src="{% static 'images/PDF_icon.png' %}" alt="no img"></span>
+                                    </a>
+                                    <a class="btn  btn_print  " title="PRINT"onclick="printReport()">
+                                        <span><img width="25px"src="{% static 'assets/printer1.png' %}" alt="no img"></span>
+                                    </a>
+                                    <a class="btn  p-0 ps-2" title="share">
+                                        <div class="btn-group dropleft">
+                                            <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa-solid fa-share"></i>
+                                            </a>
+                                            <div class="dropdown-menu">
+                                                <button type="button" class="btn " data-toggle="modal" data-target="#exampleModal">
+                                                    Share Via mail
+                                                  </button>
+                                                  <button type="button" class="btn " id="sendWhatsApp">
+                                                 {% post_to_whatsapp objects_or_url "whatsapp" %}
+                                                  </button>
+                                            </div>
+                                          </div>
+                                    </a>
+                            </div>
+
+
+                            
+
+
+                        </div>
+
+                    </div>
+
+
+                    
+    
+                    
+                </div>
+
+               
+
+            </div>
+
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Send Report via mail</h5>
+                    
+                    </div>
+                    <div class="modal-body">
+                      <form method="post" action="{% url 'itemReport_mail' %}"    id="email" enctype="multipart/form-data" onsubmit="updateHiddenFields()">
+                        {% csrf_token %}
+                       <!-- Hidden fields -->
+                        <input type="hidden" name="hiddenFromDate" id="hiddenFromDate">
+                        <input type="hidden" name="hiddenToDate" id="hiddenToDate">
+                        <input type="hidden" name="hiddenParty" id="hiddenParty">
+                        <div class="form-group">
+                            <lable>Mail id</lable>
+                            <textarea  name='email' required class="form-control" id="message"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <lable>Message</lable>
+                            <input type="text"  name="message" required class="form-control">
+                        </div>
+                        
+                        <button type="submit" class=" btn  btn-primary mx-auto d-block">Share</button>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary "  data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+
+
+
+
+
+                        
+       
+
+        <div class="row pt-0 m-0 p-0 bg-light bs">
+            <div class="col " style="text-align: end; margin-right:30px;"> <a class="mr-12" href="{% url 'companyreport' %}" style="text-align: right; font-size:xx-large; color: black;">
+                <i class="fa fa-times mt-2" aria-hidden="true"></i>
+            </a></div>
+            <div class="card p-0 bg-light" style="min-height: 60vh;">
+                <div class="row m-0 p-0 pt-3">
+                    <div class="col-sm-12 col-lg-3">
+                       
+                        <div class="pt-2">
+                            <div class="position-relative">
+                                <div class="position-absolute" style="margin-top:0.4rem;margin-left: 0.5rem;">
+                                    <span class="fa fa-search fs-5 text-info"></span>
+                                </div>
+                            </div>
+                            <input id="search_input1" style="padding-inline-start: 2rem;"
+                                class="w-100 border-secondary text-dark pt-1 pb-1 rounded" type="text"
+                                placeholder=" search here.." onkeyup="searchTable()">
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-lg-7">
+
+                    </div>
+
+                    <div class="col-sm-12 col-lg-2 pt-1">
+
+                        
+                    </div>
+                    <div class="mt-3" id="content-div">
+                        <p class="tb fw-bolder pt-2">Item Report - Party</p>
+                       
+
+                        <div class="table-responsive">
+                        <table id="myTable"
+                            class="table table-bordered table-info table-hover  tb  w-100">
+                            <thead>
+                                
+                                <th class="text-center fs-2 bg-secondary text-dark">Item Name
+                                    <div class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+                                        aria-expanded="false"><i class="fas fa-filter filter-button"></i></div>
+
+                                    <div class="dropdown-menu exclude-export "
+                                        style="box-shadow:  2px 2px 10px 3px rgba(0, 0, 0, 0.397);">
+
+                                        <div class="p-2 filter-dropdown">
+                                            <label for="">Equel to:</label>
+
+                                            <input type="text" class="form-control filter-value border-secondary">
+                                            
+                                                <button class="btn apply-filter btn-sm btn-secondary">Apply</button>
+                                                <button
+                                                    class="btn clear-filter btn-sm  btn-secondary">Clear</button>
+                                            
+
+                                        </div>
+
+                                    </div>
+                                </th>
+
+                                <th class="text-center fs-2 bg-secondary text-dark">
+                                    Sales Quantity
+                                    <div class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+                                        aria-expanded="false"><i class="fas fa-filter filter-button"></i></div>
+
+                                    <div class="dropdown-menu exclude-export "
+                                        style="box-shadow:  2px 2px 10px 3px rgba(0, 0, 0, 0.397);">
+
+                                        <div class="p-2 filter-dropdown">
+                                            <label for="">Equel to:</label>
+
+                                            <input type="text" class="form-control filter-value border-secondary">
+                                            
+                                                <button class="btn apply-filter btn-sm btn-secondary">Apply</button>
+                                                <button
+                                                    class="btn clear-filter btn-sm  btn-secondary">Clear</button>
+                                            
+
+                                        </div>
+
+                                    </div>
+                                </th>
+
+
+                                <th class="text-center fs-2 bg-secondary text-dark">
+                                    Sales Amount
+                                    <div class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+                                        aria-expanded="false"><i class="fas fa-filter filter-button"></i></div>
+
+                                    <div class="dropdown-menu exclude-export "
+                                        style="box-shadow:  2px 2px 10px 3px rgba(0, 0, 0, 0.397);">
+
+                                        <div class="p-2 filter-dropdown">
+                                            <label for="">Equel to:</label>
+
+                                            <input type="text" class="form-control filter-value border-secondary">
+                                            
+                                                <button class="btn apply-filter btn-sm btn-secondary">Apply</button>
+                                                <button
+                                                    class="btn clear-filter btn-sm  btn-secondary">Clear</button>
+                                            
+
+                                        </div>
+
+                                    </div>
+                                </th>
+
+                                
+                                <th class="text-center fs-2 bg-secondary text-dark">Purchase Quantity
+                                    <div class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+                                        aria-expanded="false"><i class="fas fa-filter filter-button"></i></div>
+
+                                    <div class="dropdown-menu exclude-export"
+                                        style="box-shadow:  2px 2px 10px 3px rgba(0, 0, 0, 0.397);">
+
+                                        <div class="p-2 filter-dropdown">
+                                            <label for="">Equel to:</label>
+
+                                            <input type="text" class="form-control filter-value border-secondary">
+                                            
+                                                <button class="btn apply-filter btn-sm btn-secondary">Apply</button>
+                                                <button
+                                                    class="btn clear-filter btn-sm  btn-secondary">Clear</button>
+                                            
+
+                                        </div>
+
+                                    </div>
+                                </th>
+
+                                <th class="text-center fs-2 bg-secondary text-dark">Purcahes Amount
+                                    <div class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"
+                                        aria-expanded="false"><i class="fas fa-filter filter-button"></i></div>
+
+                                    <div class="dropdown-menu exclude-export"
+                                        style="box-shadow:  2px 2px 10px 3px rgba(0, 0, 0, 0.397);">
+
+                                        <div class="p-2 filter-dropdown">
+                                            <label for="">Equel to:</label>
+
+                                            <input type="text" class="form-control filter-value border-secondary">
+                                            
+                                                <button class="btn apply-filter btn-sm btn-secondary">Apply</button>
+                                                <button
+                                                    class="btn clear-filter btn-sm  btn-secondary">Clear</button>
+                                            
+
+                                        </div>
+
+                                    </div>
+                                </th>
+
+                               
+
+                               
+                                
+                                
+                                
+                               
+                            </thead>
+                            <tbody id = myTableBody >
+                                {% for cd in combined_data.values %}
+                                <tr id="mytable_tr">
+                                    <td>{{cd.item_name}}</td>
+                                    <td class="sales_quantity">{{cd.sales_quantity}}</td>
+                                    <td class="sales_amount">{{cd.sales_amount|floatformat:2}}</td>
+                                    <td class="purchase_quantity">{{cd.purchase_quantity}}</td>
+                                    <td class="purchase_amount">{{cd.purchase_amount|floatformat:2}}</td>
+
+                                     
+                                    
+                                </tr>
+                                {% endfor %}
+                               
+
+
+                            </tbody>
+                        </table>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="card mb-3 total-row">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Sales Quantity:</h5>
+                                        <p class="card-text" id="total_sales_quantity"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3 total-row">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Sales Amount:</h5>
+                                        <p class="card-text" id="total_sales_amount"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3 total-row">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Purchase Quantity:</h5>
+                                        <p class="card-text" id="total_purchase_quantity"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3 total-row">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Purchase Amount:</h5>
+                                        <p class="card-text" id="total_purchase_amount"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </div>
+   
+</div>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.apply-filter').on('click', function () {
+            const $table = $('#myTable');
+            const columnIndex = $(this).closest('th').index();
+            var  filterValue = $(this).siblings('.filter-value').val().trim();
+            document.getElementById("filter").value =filterValue;
+            console.log("=============================+++++++++++++++");
+            console.log(filterValue)
+
+            $table.find('tbody tr').hide(); // Hide all rows
+            console.log("hide");
+            applyEqualToFilter($table, columnIndex, filterValue);
+           
+
+            // Close the filter dropdown
+            // $(this).closest('.filter-dropdown').hide();
+        });
+
+        function applyEqualToFilter($table, columnIndex, filterValue) {
+            console.log("filter");
+            $table.find(`tbody tr td:nth-child(${columnIndex + 1})`).each(function () {
+                const cellValue = $(this).text().trim();
+                if (cellValue === filterValue) {
+                    $(this).parent().show();
+                    console.log(this)
+                    
+                }
+            });
+        }
+
+        $('.clear-filter').on('click', function () {
+            $('#myTable tbody tr').show();
+            $(this).siblings('.filter-value').val('');
+
+            // Close the filter dropdown
+            // $(this).closest('.filter-dropdown').hide();
+        });
+
+        $('.apply-filter').on('click', function () {
+            const $table = $('#myTable1');
+            const columnIndex = $(this).closest('th').index();
+            const filterValue = $(this).siblings('.filter-value').val().trim();
+            console.log("=============================+++++++++++++++");
+            console.log(filterValue)
+
+            $table.find('tbody tr').hide(); // Hide all rows
+            console.log("hide");
+            applyEqualToFilter($table, columnIndex, filterValue);
+
+            // Close the filter dropdown
+            // $(this).closest('.filter-dropdown').hide();
+        });
+
+        function applyEqualToFilter($table, columnIndex, filterValue) {
+            console.log("filter");
+            $table.find(`tbody tr td:nth-child(${columnIndex + 1})`).each(function () {
+                const cellValue = $(this).text().trim();
+                if (cellValue === filterValue) {
+                    $(this).parent().show();
+                    console.log(this)
+                }
+            });
+            calculatetotal()
+        }
+
+        $('.clear-filter').on('click', function () {
+            $('#myTable tbody tr').show();
+            $(this).siblings('.filter-value').val('');
+            window.reload();
+            // Close the filter dropdown
+            // $(this).closest('.filter-dropdown').hide();
+        });
+
+    });
+</script>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<script>
+    function pdfReport() {
+    console.log("myTable1");
+
+    // Use the correct selector to get the element by ID
+    var element = document.getElementById('content-div') 
+
+            var opt =
+            {
+                margin: 0.5,
+                filename: 'item report - party' + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 4 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait', }
+            };
+            html2pdf().set(opt).from(element).save();
+            
+    
+}
+
+
+</script>
+<script>
+    
+    function exportToExcel() {
+    
+        
+        
+    var tableClone = document.querySelector('#myTable').cloneNode(true);
+
+   
+    var excludedElements = tableClone.querySelectorAll('.exclude-export');
+    for (var i = 0; i < excludedElements.length; i++) {
+        excludedElements[i].parentNode.removeChild(excludedElements[i]);
+    }
+
+    var ws = XLSX.utils.table_to_sheet(tableClone);
+
+    var range = XLSX.utils.decode_range(ws['!ref']);
+    for (var C = range.s.c; C <= range.e.c; ++C) {
+        var width = 20;
+        ws['!cols'] = ws['!cols'] || [];
+        ws['!cols'][C] = { wch: width };
+    }
+
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.writeFile(wb, 'Party_item_Report.xlsx');
+}
+
+
+  </script>
+  <script>
+    function printReport(){
+     
+      var printContents = document.getElementById('content-div').innerHTML;
+      
+     
+      var $printerDiv = $('<div class="printContainer"></div>');
+  
+      // Set the inner HTML of the temporary div to the content to be printed
+      $printerDiv.html(printContents); 
+  
+      
+      $('body').append($printerDiv).addClass("printingContent"); 
+      $printerDiv.css({
+      'margin': '20px', // Adjust margins as needed
+      'padding': '20px' // Adjust padding as needed
+  });
+  
+      
+      window.print(); 
+  
+      
+      $printerDiv.remove();
+  
+     
+      $('body').removeClass("printingContent");
+  
+  }
+  </script>
+  
+
+
+  <script>
+    
+   
+    var initialTotals = {
+        total_sales_quantity: 0,
+        total_sales_amount: 0,
+        total_purchase_quantity: 0,
+        total_purchase_amount: 0
+    };
+
+   
+    function calculateTotals() {
+        var totalSalesQuantity = 0;
+        var totalSalesAmount = 0;
+        var totalPurchaseQuantity = 0;
+        var totalPurchaseAmount = 0;
+
+        var visibleRows = document.querySelectorAll('#myTable tbody tr');
+
+        visibleRows.forEach(function(row) {
+            if (row.style.display !== "none") {
+                var salesQuantity = parseInt(row.querySelector('.sales_quantity').textContent) || 0;
+                var salesAmount = parseFloat(row.querySelector('.sales_amount').textContent) || 0;
+                var purchaseQuantity = parseInt(row.querySelector('.purchase_quantity').textContent) || 0;
+                var purchaseAmount = parseFloat(row.querySelector('.purchase_amount').textContent) || 0;
+
+                totalSalesQuantity += salesQuantity;
+                totalSalesAmount += salesAmount;
+                totalPurchaseQuantity += purchaseQuantity;
+                totalPurchaseAmount += purchaseAmount;
+            }
+        });
+
+        
+        updateTotalValues(totalSalesQuantity, totalSalesAmount, totalPurchaseQuantity, totalPurchaseAmount);
+    }
+
+    
+    function updateTotalValues(totalSalesQuantity, totalSalesAmount, totalPurchaseQuantity, totalPurchaseAmount) {
+        document.getElementById('total_sales_quantity').textContent = totalSalesQuantity;
+        document.getElementById('total_sales_amount').textContent = totalSalesAmount.toFixed(2);
+        document.getElementById('total_purchase_quantity').textContent = totalPurchaseQuantity;
+        document.getElementById('total_purchase_amount').textContent = totalPurchaseAmount.toFixed(2);
+    }
+
+   
+    function resetTable() {
+        // Show all rows
+        var visibleRows = document.querySelectorAll('#myTable tbody tr');
+        visibleRows.forEach(function(row) {
+            row.style.display = "";
+        });
+        updateTotalValues(
+            initialTotals.total_sales_quantity,
+            initialTotals.total_sales_amount,
+            initialTotals.total_purchase_quantity,
+            initialTotals.total_purchase_amount
+        );
+    }
+
+    
+    window.onload = function() {
+        
+        initialTotals.total_sales_quantity = parseInt(document.getElementById('total_sales_quantity').textContent) || 0;
+        initialTotals.total_sales_amount = parseFloat(document.getElementById('total_sales_amount').textContent) || 0;
+        initialTotals.total_purchase_quantity = parseInt(document.getElementById('total_purchase_quantity').textContent) || 0;
+        initialTotals.total_purchase_amount = parseFloat(document.getElementById('total_purchase_amount').textContent) || 0;
+        
+        calculateTotals(); 
+    };
+
+    
+    function searchTable() {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("search_input1");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("myTable");
+    tr = table.getElementsByTagName("tr");
+
+   
+    if (filter === "") {
+        resetTable();
+        calculateTotals(); 
+        return;
+    }
+
+    for (i = 0; i < tr.length; i++) {
+        
+        if (tr[i].parentNode.nodeName === "THEAD") {
+            continue;
+        }
+
+
+        var matchFound = false;
+        td = tr[i].getElementsByTagName("td")[0]; 
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase() === filter) {
+                matchFound = true;
+            }
+        }
+        tr[i].style.display = matchFound ? "" : "none";
+    }
+
+    calculateTotals();
+}
+    
+    document.getElementById('search_input1').addEventListener('input', function() {
+        searchTable();
+    });
+</script>
+
+
+
+<script>
+  
+    function details_filter_by_date() {
+        var fromdate = document.getElementById('in1').value || 0;
+        var todate = document.getElementById('in2').value || 0;
+
+        if (todate !== 0 && fromdate !== 0) {
+            document.getElementById('datefilter').innerHTML = fromdate + '  to  ' + todate;
+            $.ajax({
+                type: 'GET',
+                url: '{% url "item_party_searchdate" %}',
+                data: {
+                    fromdate: fromdate,
+                    todate: todate
+                },
+                success: function(data) {
+                    var tbody = document.querySelector('#myTable tbody'); 
+                    console.log(data.c_data);
+                    if (data && data.c_data) {
+                        tbody.innerHTML = ''; // Emptying the table body
+                        for (var itemName in data.c_data) {
+                            if (data.c_data.hasOwnProperty(itemName)) {
+                                var item = data.c_data[itemName];
+                                var newRow = `<tr>
+                                    <td class="" style="color: black;">${itemName}</td>
+                                    <td class="sales-quantity" style="color: black;">${item['sales_quantity']}</td>
+                                    <td class="sales-amount" style="color: black;">${item['sales_amount']}</td>
+                                    <td class="purchase-quantity" style="color: black;">${item['purchase_quantity']}</td>
+                                    <td class="purchase-amount" style="color: black;">${item['purchase_amount']}</td>
+                                </tr>`;
+                                tbody.insertAdjacentHTML('beforeend', newRow);
+                            }
+                        }
+                        
+                        // Calculate totals based on the data received
+                        var totalSalesQuantity = 0;
+                        var totalSalesAmount = 0;
+                        var totalPurchaseQuantity = 0;
+                        var totalPurchaseAmount = 0;
+
+                        for (var itemName in data.c_data) {
+                            if (data.c_data.hasOwnProperty(itemName)) {
+                                var item = data.c_data[itemName];
+                                totalSalesQuantity += parseInt(item['sales_quantity']) || 0;
+                                totalSalesAmount += parseFloat(item['sales_amount']) || 0;
+                                totalPurchaseQuantity += parseInt(item['purchase_quantity']) || 0;
+                                totalPurchaseAmount += parseFloat(item['purchase_amount']) || 0;
+                            }
+                        }
+
+                        // Update total values
+                        updateTotalValues(totalSalesQuantity, totalSalesAmount, totalPurchaseQuantity, totalPurchaseAmount);
+                    } else {
+                        console.log('No data received or invalid format');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        } else {
+            console.log('Enter both dates');
+        }
+    }
+
+</script>
+
+<script>
+    function details_filter_by_party() {
+        var selectedParty = document.getElementById('in3').value || 0;
+
+        if (selectedParty !== 0) {
+            $.ajax({
+                type: 'GET',
+                url: '{% url "item_party_filter" %}',
+                data: {
+                    selectparty: selectedParty
+                },
+                success: function(data) {
+                    var tbody = document.querySelector('#myTable tbody');
+                    console.log(data.c_data);
+                    if (data && data.c_data) {
+                        tbody.innerHTML = ''; 
+                        for (var itemName in data.c_data) {
+                            if (data.c_data.hasOwnProperty(itemName)) {
+                                var item = data.c_data[itemName];
+                                var newRow = `<tr>
+                                    <td class="" style="color: black;">${itemName}</td>
+                                    <td class="sales-quantity" style="color: black;">${item['sales_quantity']}</td>
+                                    <td class="sales-amount" style="color: black;">${item['sales_amount']}</td>
+                                    <td class="purchase-quantity" style="color: black;">${item['purchase_quantity']}</td>
+                                    <td class="purchase-amount" style="color: black;">${item['purchase_amount']}</td>
+                                </tr>`;
+                                tbody.insertAdjacentHTML('beforeend', newRow);
+                            }
+                        }
+
+                        
+                        var totalSalesQuantity = 0;
+                        var totalSalesAmount = 0;
+                        var totalPurchaseQuantity = 0;
+                        var totalPurchaseAmount = 0;
+
+                        for (var itemName in data.c_data) {
+                            if (data.c_data.hasOwnProperty(itemName)) {
+                                var item = data.c_data[itemName];
+                                totalSalesQuantity += parseInt(item['sales_quantity']) || 0;
+                                totalSalesAmount += parseFloat(item['sales_amount']) || 0;
+                                totalPurchaseQuantity += parseInt(item['purchase_quantity']) || 0;
+                                totalPurchaseAmount += parseFloat(item['purchase_amount']) || 0;
+                            }
+                        }
+
+                       
+                        updateTotalValues(totalSalesQuantity, totalSalesAmount, totalPurchaseQuantity, totalPurchaseAmount);
+                    } else {
+                        console.log('No data received or invalid format');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        } else {
+            console.log('Select a party');
+        }
+    }
+</script>
+
+<script>
+    function updateHiddenFields() {
+        document.getElementById('hiddenFromDate').value = document.getElementById('in1').value;
+        document.getElementById('hiddenToDate').value = document.getElementById('in2').value;
+        document.getElementById('hiddenParty').value = document.getElementById('in3').value;
+    }
+    
+    
+    updateHiddenFields();
+    </script>
+
+
+
+{% endblock %}

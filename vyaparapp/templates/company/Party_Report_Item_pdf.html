@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        .pdf-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+    
+        .pdf-table th, .pdf-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <h2 style="text-align: center; color:red;">{{staff.company.company_name}}</h2>
+        <h4 style="text-align: center;">Party Report By Item</h4>
+        <h5 style="text-align: center;">
+            <h4 {% if start_date == None or end_date == None  %} style="display: none;" {% endif %}>{{start_date}} to {{end_date}}</h4>
+        </h5>
+
+        <table class="table-bordered transaction_table table text-dark mb-4 pdf-table" id="billtable">
+            <thead style="color: blue;">
+                <th> PARTY NAME </th>
+                <th> SALES QUANTITY  </th>
+                <th> SALES AMOUNT </th>
+                <th> PURCHASE QUANTITY </th>
+                <th> PURCHASE AMOUNT </th>
+            </thead>
+            <tbody>
+                {% for i in sale_items %}
+                <tr>
+                    <td style="color: black;">{{ i.sale_order.party.party_name }}</td>
+                    <td style="color: black;">{{ i.qty }}</td>
+                    <td style="color: black;">{{ i.sale_order.grandtotal }}</td>
+                    <td style="color: black;">-</td>
+                    <td style="color: black;">-</td>
+                    <td style="display: none;">{{ i.product.item_name }}</td>
+                    <td style="display: none;">{{ i.sale_order.orderdate }}</td>
+                </tr>
+                {% endfor %}
+                {% for i in purchase_items %}
+                <tr>
+                    <td style="color: black;">{{ i.purchaseorder.party.party_name }}</td>
+                    <td style="color: black;">-</td>
+                    <td style="color: black;">-</td>
+                    <td style="color: black;">{{ i.qty }}</td>
+                    <td style="color: black;">{{ i.purchaseorder.grandtotal }}</td>
+                    <td style="display: none;">{{ i.product.item_name }}</td>
+                    <td style="display: none;">{{ i.purchaseorder.orderdate }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            
+        </table>
+        <div style="display: flex;justify-content: space-between;">
+            <h5 for="">Sales Quantity :<b id="selqty" class="ml-2">{{selqty}}</b></h5>
+            <h5 for="">Purchase Quantity : <b id="purqty" class="ml-2">{{purqty}}</b></h5>                                   
+        </div><br>
+        <div style="display: flex;justify-content: space-between;">
+            <h5 for="">Total Sales Amount :<b id="moneyIn" class="ml-2">{{moneyIn}}</b></h5>
+            <h5 for="">Total Purchase Amount : <b id="moneyOut" class="ml-2">{{moneyOut}}</b></h5>                                   
+        </div><br><br>
+    </div>
+</body>
+</html>

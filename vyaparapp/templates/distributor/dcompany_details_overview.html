@@ -29,7 +29,7 @@
                     <img src="{% static 'assets/images/profile/user-1.jpg' %}" width="20%" wi class="img-thumbnail">
                     {% endif %}
                 </center>
-                <h3 class="h3 text-center"><b>{{company.company_name}}</b></h3>
+                <h3 class="h3 text-center" style="text-transform: uppercase;"><b>{{company.company_name}}</b></h3>
 
                 <hr>
                 <div class="row p-5 pb-3">
@@ -137,8 +137,14 @@
                         <h5 class="h5"><b style="margin-right: 10px;">-> </b> Payment Terms </h5>
                     </div>
                     <div class="col">
-                        <h4 class="h4"> <b>: {{company.dateperiod.payment_terms_number}}
-                                {{company.dateperiod.payment_terms_value}}</b></h4>
+                        <h4 class="h4"> <b>: 
+                            {% if company.dateperiod %}
+                            {{company.dateperiod.payment_terms_number}} {{company.dateperiod.payment_terms_value}}
+                  
+                            {% else %}
+                            <b style="color: green;">1 Month Trial</b>
+                            {% endif %}
+                        </b></h4>
                     </div>
                 </div>
                 <div class="row p-5 pt-3 pb-3">
@@ -223,9 +229,10 @@
                     </div>
                     <div class="col"></div>
                 </div>
+                <hr>
                 
                 <center>
-                    <a href="" class="btn btn-danger mb-5"  style="width: 30%;"><b>Cancel Contract</b></a>
+                    <a href="{% url 'distributor_remove_company' company.id %}" class="btn btn-danger mb-5"  style="width: 30%;"><b>Cancel Contract</b></a>
                 </center>
                    
 

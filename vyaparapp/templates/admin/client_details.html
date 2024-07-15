@@ -16,6 +16,7 @@
 
 <div class="body-wrapper">
   <div class="container-fluid">
+    {% if data %}
 
   
 
@@ -38,19 +39,30 @@
             <tbody>
                 {% for a in data %}
               <tr>
-                <td>{{a.id}}</th>
+                <td>{{forloop.counter}}</th>
                 <td> <b><a href="{% url 'client_details_overview' a.id %}" style="color: black;">{{a.company_name}} </a></b></td>
                 <td>{{a.user.email}}</td>
                 <td>{{a.contact}}</td>
-                <td>{{a.dateperiod.payment_terms_number}} {{a.dateperiod.payment_terms_value}}</td>
+                <td>
+                  {% if a.dateperiod %}
+                  {{a.dateperiod.payment_terms_number}} {{a.dateperiod.payment_terms_value}}
+                  
+                  {% else %}
+                  <b style="color: green;">1 Month Trial</b>
+                  {% endif %}
+                </td>
                 <td>{{a.End_date}}</td>
                 <td>
-                <a href="" class="btn btn-danger m-1"><b>Cancel Contract</b></a></td>
+                <a href="{% url 'Admin_remove_clients' a.id %}" class="btn btn-danger m-1"><b>Cancel Contract</b></a></td>
               </tr>
               {% endfor %}
             </tbody>
           </table> 
         </div>
+        {% else %}
+
+            <center><img src="{% static 'images\no-data-file.png' %}" alt="" class="mt-5 pt-5"></center>
+            {% endif %}
 
   </div>
 </div>

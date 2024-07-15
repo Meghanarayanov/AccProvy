@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balancesheet</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        h2, h4, h5 {
+            margin: 10px 0;
+        }
+        .address {
+            margin: 0;
+        }
+        
+        .table thead th {
+            background-color: #f2f2f2;
+        }
+        
+       
+        .total {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="my-5 page" size="A4">
+        <div class="col-md-4">
+            <div class="card-group w-100 mx-auto d-block"> 
+                <h2 style="color:red; text-align: center;">{{ staff.company.company_name }}</h2>
+                <h4 style="text-align: center;">Balance Sheet</h4>
+                <h5 style="text-align: center;">
+                    {% if from_date %}
+                    <span id="fromDate" style="color:black; text-align: center;">From: {{ from_date }}</span>
+                    {% endif %}
+                    {% if to_date %}
+                    To: <span id="toDate" style="color:black; text-align: center;">To:{{ to_date }}</span>
+                    {% endif %}
+                </h5>
+            </div>
+        </div>
+       
+        <table class="table table-striped">
+            <tbody>
+                <tr style="font-weight: bold;">
+                    <td>Address</td>
+                   
+                </tr>
+                <tr>
+                    <td>
+                        <p class="address" style="color: #000;"> 
+                            {{ staff.company.address }}<br>
+                            {{ staff.company.city }}, {{ staff.company.state }} {{ staff.company.pincode }} <br>
+                            {{ staff.company.user.email }} <br>
+                            {{ staff.company.contact }} 
+                        </p>
+                    </td>
+                    
+                </tr>
+            </tbody>
+        </table><br>
+        
+        <div class="mt-3  " style="width: 97%;"id="tablediv">
+            <div  class="table-container table-responsive" >
+                <table class="table  table-bordered table-info  tb w-100 table-hover" id="myTable" style="text-align: center;">
+                                
+                    <thead>
+                        <tr>
+                            <th c   lass="text-center">PARTICULARS </th>
+                            <th class="text-center">AMOUNT</th>
+                            <th class="text-center">AMOUNT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="font-weight: 600;">
+                            <td colspan="3">Sources of Funds: </td> 
+                        </tr>
+                        <tr style="font-size:0.8rem; font-weight:bold;">
+                            <td class="expandable" data-target="capital-account">CAPITAL ACCOUNT</td>
+                            <td></td>
+                            <td>0.00</td>
+                        </tr>
+                        <tr class="hidden-row capital-account"  style="font-size:0.8rem;">
+                            <td>DRAWINGS OF OWNER</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="hidden-row capital-account" style="font-size:0.8rem;">
+                            <td>OWNERS CAPITAL</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr style="font-size:0.8rem; font-weight:bold;">
+                            <td  class="expandable" data-target="loans">LOANS (Liabilities)</td>
+                            <td></td>
+                            <td>{{ total_loan_amount|default:0|floatformat:2 }}</td>
+                        </tr>
+                        {% for i in bank_ac %}
+                        <tr class="hidden-row loans" style="font-size:0.8rem;">
+                            <td>BANK A/C</td>
+                            <td>{{ i.current_balance|default:0|floatformat:2 }}</td>
+                            <td></td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="hidden-row loans"  style="font-size:0.8rem;">
+                            <td>SECURED LOAN</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        {% for i in loan_ac %}
+                        <tr class="hidden-row loans" style="font-size:0.8rem;">
+                            <td>BANK LOAN</td>
+                            <td>{{ i.total_amount|default:0|floatformat:2 }}</td>
+                            <td></td>
+                        </tr>
+                        {% endfor %}
+                        <tr style="font-size:0.8rem; font-weight:bold;">
+                            <td class="expandable" data-target="current-Liabilities">CURRENT LIABILITIES</td>
+                            <td></td>
+                            <td>{{ current_liability_total|default:0|floatformat:2 }}</td>
+                        </tr>
+                        <tr class="hidden-row current-Liabilities" style="font-size:0.8rem;">
+                            <td>DUTIES AND TERMS</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="hidden-row current-Liabilities" style="font-size:0.8rem;">
+                            <td>PROVISIONS</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="hidden-row current-Liabilities parent-row" style="font-size:0.8rem;">
+                            <td class="expandable" data-target="sundry-creditors">SUNDRY CREDITORS</td>
+                            <td>{{ sundry_creditors_total|default:0|floatformat:2 }}</td>
+                            <td></td>
+                        </tr>
+                        {% for creditor in sundry_creditors %}
+                        <tr  class="hidden-row sundry-creditors" style="font-size:0.8rem;">
+                            <td>{{ creditor.party_name }}</td>
+                            <td>{{ creditor.totalbalance|default:0|floatformat:2 }}</td>
+                            <td></td>
+                        </tr>
+                        {% endfor %}
+                        <tr style="font-size:0.8rem; font-weight:bold;">
+                            {% if nett_profit %}
+                            <td class="expandable expandable-one" data-target="#profit">PROFIT</td>
+                            <td data-target="#profit"></td>
+                            <td data-target="#profit">{{ nett_profit|default:0|floatformat:2 }}</td>
+                            {% endif %}
+                        </tr>
+                        <tr style="font-size:0.8rem; font-weight:bold;">
+                            <td class="expandable expandable-one">TOTAL</td>
+                            <td></td>
+                            <td>{{ total_liability|default:0|floatformat:2 }}</td>
+                        </tr>
+
+
+                        
+                       
+
+                        <tr style="font-weight: 600;">
+
+                            <td colspan="3">Application of Funds: </td>
+
+                        </tr>
+                        <tr style="font-size:0.8rem; font-weight:bold;">
+                            <td class="expandable" data-target="fixed-assets">FIXED ASSETS</td>
+                            <td></td>
+                            <td>0.00</td>
+                        </tr>
+                        <tr class="hidden-row fixed-assets"  style="font-size:0.8rem;">
+                            <td>COMPUTER</td>
+                            <td>0.00</td>
+                            <td></td>
+                        </tr>
+                        <tr class="hidden-row fixed-assets" style="font-size:0.8rem;">
+                            <td>FURNITURE</td>
+                            <td>0.00</td>
+                            <td></td>
+                        </tr>
+                        <tr class="hidden-row fixed-assets"  style="font-size:0.8rem;">
+                            <td>LAND AND BUILDING</td>
+                            <td>0.00</td>
+                            <td></td>
+                        </tr>
+                        <tr class="hidden-row fixed-assets" style="font-size:0.8rem;">
+                            <td>MARUTI VAN</td>
+                            <td>0.00</td>
+                            <td></td>
+                        </tr>
+                        <tr style="font-size:0.8rem; font-weight:bold;">
+                            <td class="expandable" data-target="investment">INVESTMENTS</td>
+                            <td></td>
+                            <td>0.00</td>
+                        </tr>
+                        <tr class="hidden-row investment"  style="font-size:0.8rem;">
+                            <td>COMMODITIES</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr style="font-size:0.8rem; font-weight:bold;">
+                            <td class="expandable" data-target="current-assets">CURRENT ASSETS</td>
+                            <td></td>
+                            <td>{{ current_assets_total|default:0|floatformat:2 }}</td>
+                        </tr>
+                        <tr class="hidden-row current-assets parent-row" style="font-size:0.8rem;">
+                            <td class="expandable" data-target="closing-stock">CLOSING STOCK</td>
+                            <td>{{ opening_stocks_total|default:0|floatformat:2 }}</td>
+                            <td></td>
+                        </tr>
+                        {% for stocks in opening_stocks %}
+                        <tr class="hidden-row closing-stock" style="font-size:0.8rem;">
+                            <td>{{ stocks.item_name }}</td>
+                            <td>{{ stocks.item_current_stock|default:0|floatformat:2 }}</td>
+                            <td></td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="hidden-row current-assets" style="font-size:0.8rem;">
+                            <td>DEPOSITS(ASSETS)</td>
+                            <td>{{ deposits_total|default:0|floatformat:2 }}</td>
+                            <td></td>
+                        </tr>
+                        <tr class="hidden-row current-assets" style="font-size:0.8rem;">
+                            <td>LOANS AND ADVANCES(ASSETS)</td>
+                            <td>{{ loans_advances_total|default:0|floatformat:2 }}</td>
+                            <td></td>
+                        </tr>
+                        <tr class="hidden-row current-assets parent-row" style="font-size:0.8rem;">
+                            <td class="expandable" data-target="sundry-debtors">SUNDRY DEBTORS</td>
+                            <td>{{ sundry_debitors_total|default:0|floatformat:2 }}</td>
+                            <td></td>
+                        </tr>
+                        {% for debitor in sundry_debitors %}
+                        <tr class="hidden-row sundry-debtors" style="font-size:0.8rem;">
+                            <td>{{ debitor.party.party_name }}</td>
+                            <td>{{ debitor.balance|default:0|floatformat:2 }}</td>
+                            <td></td>
+                        </tr>
+                        {% endfor %}
+                        <tr style="font-size:0.8rem; font-weight:bold;">
+                            {% if nett_loss %}
+                            <td class="expandable expandable-one">LOSS</td>
+                            <td></td>
+                            <td>{{ nett_loss|default:0|floatformat:2 }}</td>
+                            {% endif %}
+                        </tr>
+                        <tr style="font-size:0.8rem; font-weight:bold;">
+                            <td class="expandable-one">TOTAL</td>
+                            <td></td>
+                            <td>{{ total_assets|default:0|floatformat:2 }}</td>
+                        </tr>
+
+                        
+
+                     
+
+                        
+                        
+
+                    </tbody>
+
+
+                </table>
+            
+        </div>
+    </div>
+</body>
+</html>

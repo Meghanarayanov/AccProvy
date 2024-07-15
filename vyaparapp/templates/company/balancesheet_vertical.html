@@ -1,0 +1,791 @@
+{% extends 'company/src/html/base.html' %}
+{% load static %}
+{% block content %}
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+{% load my_extras %}
+
+<style>
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+
+    .bs_sm{
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+
+    .paiddiv{
+        color: black;
+        height: 10vh;
+        width: 20vh;
+        padding-left: 2vh;
+        padding-top: 1vh;
+        padding-bottom: 1vh;
+        margin-left: 7vh;
+        border-radius: 8px;
+        background-color: lightgray;
+    }
+
+    .unpaiddiv{
+        color: black;
+        height: 10vh;
+        width: 20vh;
+        padding-left: 2vh;
+        padding-top: 1vh;
+        padding-bottom: 1vh;
+        margin-left: 7vh;
+        border-radius: 8px;
+        background-color: lightsteelblue;
+    }
+
+    .totaldiv{
+        color: black;
+        height: 10vh;
+        width: 20vh;
+        padding-left: 2vh;
+        padding-top: 1vh;
+        padding-bottom: 1vh;
+        margin-left: 7vh;
+        border-radius: 8px;
+        background-color: lightgreen;
+    }
+
+    #billtable tbody{
+        cursor: pointer;
+    }
+
+    #emptyMessage {
+        display: none;
+        font-size: x-large;
+        font-weight: bold;
+        color: red;
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+        padding: 10px;
+        z-index: 1;
+        width: 15%;
+    }
+
+    .dropdown-content label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .dropdown-content input {
+        width: 100%;
+        padding: 5px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+    }
+
+    .tplus{
+        margin-top: 3vh;
+        margin-left: 5vh;
+        margin-right: -2vh;
+    }
+
+    .tequal{
+        margin-top: 3vh;
+        margin-left: 5vh;
+        margin-right: -2vh;
+    }
+
+    .tg{
+        color: rgb(0, 140, 7);
+    }
+
+    .tr{
+        color: rgb(218, 0, 0);
+    }
+    
+   
+   
+
+    @media print{
+        body{
+            visibility: hidden !important; /* hide everything in body when in print mode*/
+        }
+
+        .printContainer {
+            visibility: visible !important; /* Override the rule above to only show the printables*/
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+        } 
+
+        #calcdiv{
+            visibility: visible;
+            margin-top: -30vh;
+            margin-left: -9vh;
+            margin-bottom: 30vh;
+        }
+
+        /* #billtable{
+            margin-top: 20vh;
+            margin-bottom: 20vh;
+        } */
+
+        #billtable th{
+            font-size: medium;
+        }
+
+        .extra{
+            display: none;
+        }
+    }
+    
+    ::-webkit-scrollbar{
+        display: none
+    }
+
+    #myDropdown {
+        display: none;
+    }
+    #myDropdown.show {
+        display: block;
+    }
+    #myDropdown {
+        display: none;
+        position: absolute;
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+        background-color: #f9f9f9;
+        min-width: 160px;
+        margin-top: 50px;
+        /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); */
+        z-index: 1;
+        right: 0px;
+    }
+
+    #myDropdown  a {
+        display: block;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #333;
+    }
+
+    #myDropdown  a:hover {
+        background-color: #ddd;
+    }
+    @media(max-width:768px){
+        #myDropdown{
+            position: absolute;
+            top: 300px;
+        }
+    }
+    @media(min-width:768px){
+        #myDropdown{
+            position: absolute;
+            top: 200px;
+        }
+    }
+    .table-container {
+        display:flex;
+        flex-direction:column;
+    }
+    .table-container table {
+        border-collapse: collapse;
+        width: 50%;
+    }
+    .table-container th, .table-container td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    .table-container th {
+        background-color: #f2f2f2;
+    }
+    .table-container tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    .table-container tr:hover {
+        background-color: #ddd;
+    }
+    .hidden-row {
+        display: none;
+    }
+    .hidden-row.visible {
+        display: table-row;
+    }
+    .expandable-content-one td {
+        display: none;
+    }
+    .expandable-content-one.visible td:nth-child(-n+3) {
+        display: table-cell;
+    }
+    .expandable-content-two td {
+        display: none;
+    }
+    .expandable-content-two.visible td:nth-child(-n+3) {
+        display: table-cell;
+    }
+</style>
+
+
+<div class="body-wrapper">
+    <br><br><br>
+    <center>
+        {% for m in messages %}
+        <div id="message">
+            <br><br>
+            <h4>{{m}}</h4>
+        </div>
+        {% endfor %}
+    </center>
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get the message element
+            var message = document.getElementById("message");
+
+            // Function to hide the message after 3 seconds
+            function hideMessage() {
+                message.style.display = "none";
+            }
+
+            // Show the message
+            message.style.display = "block";
+
+            // Schedule hiding the message after 3 seconds
+            setTimeout(hideMessage, 3000); // 3000 milliseconds = 3 seconds
+        });
+    </script>
+    <div class="d-flex justify-content-center pt-4">
+       
+    </div>
+    <p></p>
+    <div class="row ps-3 pe-3 m-0" >
+        <div class="col-sm-12 ps-2 pe-3">
+            <div class="row pt-0 m-0">
+                <div class="card p-0 bg-light bs"><br>
+                    <div class="row ">
+                        <div class="">
+                            <center id="displayHead">
+                                <div>
+                                    <h2 style="font-weight: 600;color: red;" id="companyHead">{{staff.company.company_name}}</h2>
+                                    <h3 id="mainHead">Balance Sheet</h3>
+                                   
+                                </div><br>
+                            </center>
+                            <div class="row mx-3">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="fromDate" style="color: black; margin-bottom: 1vh;">From Date :</label>
+                                            <input type="date" class="form-control h-100 p-2 border-secondary" id="fromDate" style="color: black; background-color: white;"  value="{{ from_date|date:'Y-m-d' }}" /> 
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="toDate" style="color: black; margin-bottom: 1vh;">To Date:</label>
+                                            <input type="date" class="form-control h-100 p-2 border-secondary" id="toDate" style="color: black; background-color: white;" value="{{ to_date|date:'Y-m-d' }}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        
+                                    </div>
+                                
+                                <div class="col-md-1"></div>
+                                <div class="col-md-4 text-right" style="margin-left: 6vw;display: flex;justify-content: end;">
+
+                                    <button class="btn mt-3" type="button" onclick="ExportToExcel()" style="margin-right: 2vh; margin-left: 5vh;">
+                                        <span><img width="22px" src="{% static 'assets/excel2.png' %}" alt="no img"></span>
+                                        <br><span style="color: black; font-size: 10px; font-weight: bold;">EXCEL</span>
+                                    </button>
+
+                                    <button class="btn mt-3" type="button" onclick="printfunction()" style="margin-right: 2vh;">
+                                        <span><img width="26px" src="{% static 'images/printer.jpeg' %}" alt="no img"></span>
+                                        <br><span style="color: black; font-size: 10px; font-weight: bold;">PRINT</span>
+                                    </button>
+
+                                    <button class="btn mt-3" type="button" onclick="generatePDF()" style="margin-right: 2vh;"> 
+                                        <span >
+                                            <img width="20px" src="{% static 'images/pdfdownload.png' %}" alt="no img"><br><span style="color: black; font-size: 10px; font-weight: bold;"><strong>PDF</strong></span></em>
+                                        </span>
+                                    </button>
+                                    
+                                    <button class="btn mt-3" type="button" onclick="toggleDropdownShare()" >
+                                        <span>
+                                            <img width="25px" src="{% static 'images/shareimg.png' %}" alt="no img"><br>
+                                            <span style="color: black; font-size: 10px; font-weight: bold;">SHARE</span>
+                                        </span>
+                                    </button>
+                                    <div class="dropdown-content" id="myDropdown" style="z-index: 10;">
+                                        <ul style="margin-bottom: -1px;"><a style="cursor: pointer;" onclick="sendWhatsApp()">WhatsApp</a></ul>
+                                        <ul style="margin-bottom: -1px;"><a style="cursor: pointer;" data-toggle="modal" data-target="#shareStockToEmail">Email</a></ul>
+                                    </div>
+                                    
+                                    
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                   
+                    
+                  
+                    
+                    
+                    <br>
+                </div>
+            </div>
+
+            <div class="row pt-0 m-0" >
+                <div class="card p-0 bg-light bs" >
+                    <div class="row p-0 pt-3" style="margin-left: 14px;">
+                        <h4 class="tb fw-bolder pt-2 text-secondary mx-1" style="margin-left: 24px;">Balance Sheet</h4>
+                    </div>
+
+                    <div class="row mx-1">
+                        <div class="col-md-2">
+                            <a role="button" style=" margin-left: 1vw;" class="btn btn-secondary" href="{% url 'balance_sheet_report' %}">Show Horizontal Balace Sheet</a>
+                        </div>
+                        <div class="col-md-6"></div>
+                        
+                    </div>
+
+                    <div class="row mx-1">
+                        <div class="col-md-12" style="margin-left: 2vh;">
+                            <div class="mt-3  " style="width: 97%;"id="tablediv">
+                                <div  class="table-container table-responsive" >
+                                
+                                <table class="table  table-bordered table-info  tb w-100 table-hover" id="myTable" style="text-align: center;">
+                                
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center bg-secondary">PARTICULARS </th>
+                                            <th class="text-center bg-secondary" >AMOUNT</th>
+                                            <th class="text-center bg-secondary">AMOUNT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr style="font-weight: 600;">
+                                            <td colspan="3">Sources of Funds: </td> 
+                                        </tr>
+                                        <tr style="font-size:0.8rem; font-weight:bold;">
+                                            <td class="expandable" data-target="capital-account">CAPITAL ACCOUNT</td>
+                                            <td></td>
+                                            <td>0.00</td>
+                                        </tr>
+                                        <tr class="hidden-row capital-account"  style="font-size:0.8rem;">
+                                            <td>DRAWINGS OF OWNER</td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="hidden-row capital-account" style="font-size:0.8rem;">
+                                            <td>OWNERS CAPITAL</td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr style="font-size:0.8rem; font-weight:bold;">
+                                            <td  class="expandable" data-target="loans">LOANS (Liabilities)</td>
+                                            <td></td>
+                                            <td>{{ total_loan_amount|default:0|floatformat:2 }}</td>
+                                        </tr>
+                                        {% for i in bank_ac %}
+                                        <tr class="hidden-row loans" style="font-size:0.8rem;">
+                                            <td>BANK A/C</td>
+                                            <td>{{ i.current_balance|default:0|floatformat:2 }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr class="hidden-row loans"  style="font-size:0.8rem;">
+                                            <td>SECURED LOAN</td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        {% for i in loan_ac %}
+                                        <tr class="hidden-row loans" style="font-size:0.8rem;">
+                                            <td>BANK LOAN</td>
+                                            <td>{{ i.total_amount|default:0|floatformat:2 }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr style="font-size:0.8rem; font-weight:bold;">
+                                            <td class="expandable" data-target="current-Liabilities">CURRENT LIABILITIES</td>
+                                            <td></td>
+                                            <td>{{ current_liability_total|default:0|floatformat:2 }}</td>
+                                        </tr>
+                                        <tr class="hidden-row current-Liabilities" style="font-size:0.8rem;">
+                                            <td>DUTIES AND TERMS</td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="hidden-row current-Liabilities" style="font-size:0.8rem;">
+                                            <td>PROVISIONS</td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="hidden-row current-Liabilities parent-row" style="font-size:0.8rem;">
+                                            <td class="expandable" data-target="sundry-creditors">SUNDRY CREDITORS</td>
+                                            <td>{{ sundry_creditors_total|default:0|floatformat:2 }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% for creditor in sundry_creditors %}
+                                        <tr  class="hidden-row sundry-creditors" style="font-size:0.8rem;">
+                                            <td>{{ creditor.party_name }}</td>
+                                            <td>{{ creditor.totalbalance|default:0|floatformat:2 }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr style="font-size:0.8rem; font-weight:bold;">
+                                            {% if nett_profit %}
+                                            <td class="expandable expandable-one" data-target="#profit">PROFIT</td>
+                                            <td data-target="#profit"></td>
+                                            <td data-target="#profit">{{ nett_profit|default:0|floatformat:2 }}</td>
+                                            {% endif %}
+                                        </tr>
+                                        <tr style="font-size:0.8rem; font-weight:bold;">
+                                            <td class="expandable expandable-one">TOTAL</td>
+                                            <td></td>
+                                            <td>{{ total_liability|default:0|floatformat:2 }}</td>
+                                        </tr>
+
+                                    
+                                        
+
+                                       
+
+                                        <tr style="font-weight: 600;">
+
+                                            <td colspan="3">Application of Funds: </td>
+
+                                        </tr>
+
+                                        
+
+                                     
+
+                                        <tr style="font-size:0.8rem; font-weight:bold;">
+                                            <td class="expandable" data-target="fixed-assets">FIXED ASSETS</td>
+                                            <td></td>
+                                            <td>0.00</td>
+                                        </tr>
+                                        <tr class="hidden-row fixed-assets"  style="font-size:0.8rem;">
+                                            <td>COMPUTER</td>
+                                            <td>0.00</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="hidden-row fixed-assets" style="font-size:0.8rem;">
+                                            <td>FURNITURE</td>
+                                            <td>0.00</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="hidden-row fixed-assets"  style="font-size:0.8rem;">
+                                            <td>LAND AND BUILDING</td>
+                                            <td>0.00</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="hidden-row fixed-assets" style="font-size:0.8rem;">
+                                            <td>MARUTI VAN</td>
+                                            <td>0.00</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr style="font-size:0.8rem; font-weight:bold;">
+                                            <td class="expandable" data-target="investment">INVESTMENTS</td>
+                                            <td></td>
+                                            <td>0.00</td>
+                                        </tr>
+                                        <tr class="hidden-row investment"  style="font-size:0.8rem;">
+                                            <td>COMMODITIES</td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr style="font-size:0.8rem; font-weight:bold;">
+                                            <td class="expandable" data-target="current-assets">CURRENT ASSETS</td>
+                                            <td></td>
+                                            <td>{{ current_assets_total|default:0|floatformat:2 }}</td>
+                                        </tr>
+                                        <tr class="hidden-row current-assets parent-row" style="font-size:0.8rem;">
+                                            <td class="expandable" data-target="closing-stock">CLOSING STOCK</td>
+                                            <td>{{ opening_stocks_total|default:0|floatformat:2 }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% for stocks in opening_stocks %}
+                                        <tr class="hidden-row closing-stock" style="font-size:0.8rem;">
+                                            <td>{{ stocks.item_name }}</td>
+                                            <td>{{ stocks.item_current_stock|default:0|floatformat:2 }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr class="hidden-row current-assets" style="font-size:0.8rem;">
+                                            <td>DEPOSITS(ASSETS)</td>
+                                            <td>{{ deposits_total|default:0|floatformat:2 }}</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="hidden-row current-assets" style="font-size:0.8rem;">
+                                            <td>LOANS AND ADVANCES(ASSETS)</td>
+                                            <td>{{ loans_advances_total|default:0|floatformat:2 }}</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr class="hidden-row current-assets parent-row" style="font-size:0.8rem;">
+                                            <td class="expandable" data-target="sundry-debtors">SUNDRY DEBTORS</td>
+                                            <td>{{ sundry_debitors_total|default:0|floatformat:2 }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% for debitor in sundry_debitors %}
+                                        <tr class="hidden-row sundry-debtors" style="font-size:0.8rem;">
+                                            <td>{{ debitor.party.party_name }}</td>
+                                            <td>{{ debitor.balance|default:0|floatformat:2 }}</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endfor %}
+                                        <tr style="font-size:0.8rem; font-weight:bold;">
+                                            {% if nett_loss %}
+                                            <td class="expandable expandable-one">LOSS</td>
+                                            <td></td>
+                                            <td>{{ nett_loss|default:0|floatformat:2 }}</td>
+                                            {% endif %}
+                                        </tr>
+                                        <tr style="font-size:0.8rem; font-weight:bold;">
+                                            <td class="expandable-one">TOTAL</td>
+                                            <td></td>
+                                            <td>{{ total_assets|default:0|floatformat:2 }}</td>
+                                        </tr>
+
+                                    </tbody>
+
+
+                                </table>
+                            </div>
+                                <br> 
+                                <div class="modal fade" id="shareStockToEmail" tabindex="-1" aria-labelledby="shareBillEmailLabel" aria-hidden="true" style="color: #000;">
+                                    <div class="modal-dialog" >
+                                      <div class="modal-content" style=" background-color:rgb(85, 188, 248);border-radius: 3px;">
+                                        <div class="modal-header" style="border-bottom: 1px solid #ffffff;">
+                                          <h5 class="modal-title text-dark" id="shareBillEmailLabel">Share Balance Sheet Via Email</h5>
+                                          <button type="button" class="btn-close" data-dismiss="modal" onclick="toggleDropdownShare()"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{% url 'balancesheet_mail_vertical' %}" method="post" class="needs-validation" id="share_to_email_form">
+                                                {% csrf_token %}
+                                                <div class="form-group">
+                                                    <label for="emailIds" class="mb-2">Email IDs</label>
+                                                    <textarea style="background-color: white;"  id="emailIds"name='emailIds' class="form-control" id="emailIds" rows="3" placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
+                                                </div>
+                                                <div class="form-group mt-2">
+                                                    <label for="item_unitname" class="mb-2">Message(optional)</label>
+                                                    <textarea name="email_message" id="email_message" class="form-control" cols="" rows="4" placeholder="This message will be sent along with Invoice details." style="background-color: white;"></textarea>
+                                                </div>
+                                                
+                                                <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffffff;">
+                                                    <button type="submit" class=" w-50 text-uppercase btn btn-danger" style="background-color: rgb(212, 50, 50);"  id="share_with_email">SEND</button>
+                                                   
+                                                  </div>
+                                              </form>
+                                        </div>
+                                        
+                                      </div>
+                                    </div>
+                                </div>
+                       
+<script>
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add event listeners
+        document.getElementById('fromDate').addEventListener('change', handleFromDateChange);
+        document.getElementById('toDate').addEventListener('change', filterDates);
+    
+        function handleFromDateChange() {
+            var fromDate = document.getElementById('fromDate').value;
+            document.getElementById('toDate').min = fromDate;
+            filterDates();
+        }
+    
+        function filterDates() {
+            var fromDate = document.getElementById('fromDate').value;
+            var toDate = document.getElementById('toDate').value;
+    
+            if (fromDate && toDate) {
+                window.location.href = `?from_date=${fromDate}&to_date=${toDate}`;
+                // Clear the input fields
+                document.getElementById('fromDate').value = '';
+                document.getElementById('toDate').value = '';
+            }
+        }
+    });
+
+    function printfunction() {
+    var printContents = document.getElementById("tablediv").outerHTML; 
+    var originalContents = document.body.innerHTML;
+
+    // Add CSS styles for right alignment of integer values
+    var customStyle = `
+        <style>
+            .total-amount, .amount {
+                float: right;
+                text-align: right;
+            }
+            
+        </style>
+    `;
+
+    document.body.innerHTML = "<html><head><title>Print</title>" + customStyle + "</head><body>" + printContents + "</body></html>";
+
+    window.print(); // Trigger the print dialog
+
+    // Restore the original content after printing
+    document.body.innerHTML = originalContents;
+
+    // Optionally reload the page to restore JavaScript functionality
+    window.location.reload();
+}
+
+
+function ExportToExcel() {
+    var table = document.getElementById('tablediv');
+    var workbook = XLSX.utils.table_to_book(table, { sheet: "Sheet 1" });    
+    var fromDate = document.getElementById("fromDate").value;
+    var toDate = document.getElementById("toDate").value;
+    var filename = `Balancesheet${fromDate}_to_${toDate}.xlsx`;
+
+    // Set the column width for the first column (index 0)
+    workbook.Sheets["Sheet 1"]["!cols"] = [{ wpx: 150 }, { wpx: 150 }];
+
+    XLSX.writeFile(workbook, filename);
+}
+
+    
+    function generatePDF() {
+    const table = document.querySelector('#tablediv');
+    
+    // Open all details sections to include them in the PDF
+    var detailsSections = table.querySelectorAll(".party-i-details, .party-P-details, .party-e-details, .party-s-details, .party-I-details, .party-c-stock-details");
+    detailsSections.forEach(function(section) {
+        section.style.display = 'block';
+    });
+
+    var clonedTable = table.cloneNode(true);
+
+    // Remove any elements that should not appear in the PDF
+    var elementsToRemove = clonedTable.querySelectorAll(".dropdown-content-div");
+    elementsToRemove.forEach(function(element) {
+        element.parentNode.removeChild(element);
+    });
+
+    // Reduce the width of the table to fit within the PDF borders
+    clonedTable.style.transform = 'scale(0.7)'; // Adjust the scale as needed
+    clonedTable.style.transformOrigin = 'top left'; // Ensure scaling from the top-left corner
+
+    var container = document.createElement('div');
+    var heading = document.createElement('h1');
+    heading.innerText = 'Balance Sheet';
+    var datefield = document.createElement('h5');
+
+    var fromDate = document.getElementById("fromDate").value;
+    var toDate = document.getElementById("toDate").value;
+    if (fromDate && toDate) {
+        datefield.innerHTML = `From:&nbsp;${fromDate} &nbsp;&nbsp;&nbsp; To:&nbsp; ${toDate}`;
+    } else if (fromDate && !toDate) {
+        datefield.innerText = `From: ${fromDate}`;
+    }
+
+    container.appendChild(heading);
+    container.appendChild(datefield);
+    container.appendChild(clonedTable);
+
+    // PDF options
+    var opt = {
+        margin: [0.5, 0.3, 0.3, 0.5],
+        filename: 'balancesheet.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'cm', format: 'letter', orientation: 'portrait' }
+    };
+
+    // Generate PDF
+    html2pdf().set(opt).from(container).save();
+
+    // Restore the original display state of the details sections
+    detailsSections.forEach(function(section) {
+        section.style.display = 'none';
+    });
+}
+
+
+
+    function toggleDropdownShare() {
+        var dropdownContent = document.getElementById("myDropdown");
+        dropdownContent.classList.toggle("show");
+    }
+    function sendWhatsApp() {
+        // Page link you want to send
+        var pageLink = window.location.href;
+    
+        // Message to include in the WhatsApp message
+        var message = "Your requested Balance Sheet page : " + pageLink;
+    
+        // Create the share link
+        var shareLink = "https://wa.me/?text=" + encodeURIComponent(message);
+    
+        // Open a new window/tab with the share link
+        window.open(shareLink, '_blank');
+    }
+    $('#share_with_email').click(function(event) {
+        event.preventDefault();
+        $.ajax({
+            url: "{% url 'balancesheet_mail_vertical' %}",
+            type: 'GET',
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            data: {
+                from_date: $('#fromDate').val(),
+                to_date: $('#toDate').val(),
+                email_ids: $('#emailIds').val(),
+                email_message: $('#email_message').val(),
+            },
+            success: function(response) {
+                $('#share_to_email_form')[0].reset();
+                alert(response.message);
+            },
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const expandableRows = document.querySelectorAll('.expandable');
+    
+        expandableRows.forEach(row => {
+            row.addEventListener('click', function () {
+                const targetClass = row.getAttribute('data-target');
+                const relatedRows = document.querySelectorAll(`.${targetClass}`);
+    
+                relatedRows.forEach(relatedRow => {
+                    relatedRow.classList.toggle('visible');
+                });
+            });
+        });
+    });
+    
+
+
+   
+    
+   
+</script>                                
+{% endblock  %}
+
+

@@ -1,9 +1,11 @@
 <!-- create by athul -->
+<!-- updated by Nithya-->
 
 {% extends 'company/src/html/base.html' %}
 
 {% block content %}
 {% load static %}
+
 <style>
   .bs {
     box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
@@ -41,18 +43,22 @@
   select option:hover{
     background-color: black;
   }
+
+  #item_unit_value, #modal_closing {
+    height: 38px; /* Adjust the height as needed */
+  }
 </style>
 
 <div class="body-wrapper">
   <br><br><br>
   <div class="row p-0 m-0">
-    <div class="col-12  p-0 m-0" style="height: ;">
+    <div class="col-12  p-0 m-0" >
       <div class=" bg-light bg-light pb-0 mb-0 p-2" style="height:100%;width:100%">
         <div class="d-flex justify-content-center pt-4">
-          <a href="" id="b1" class="btn  text-white"
+          <a href="{% url 'add_salesinvoice' %}" id="b1" class="btn  text-white"
             style="margin-right: 10px; background-color: rgb(252, 3, 3,0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add
             Sale <i class="fa fa-plus"></i></a>
-          <a href="" id="b2" class="btn  text-white"
+          <a href="{% url 'add_purchasebill' %}" id="b2" class="btn  text-white"
             style="margin-right: 10px;background-color: rgba(3, 161, 252, 0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add
             Purchase <i class="fa fa-plus"></i></a>
           <a href="" id="b3" class="btn text-primary"
@@ -68,11 +74,12 @@
                   <div class="position-relative">
                     <div class="position-absolute end-0">
                       <div class="d-flex pt-3 pe-3">
-                        <span class="fa fa-cog fs-5 tb p-1 pe-3"></span>
+                        {% comment %} <span class="fa fa-cog fs-5 tb p-1 pe-3"></span> {% endcomment %}
                         <a href="{% url 'items_list' 0 %}"><span class="fa fa-times fs-5 tb p-1"></span></a>
                       </div>
                     </div>
                   </div>
+                 
                   <div class="bg-light bs p-4 rounded mb-5">
                       <div class="d-md-flex d-sm-block">
                         <h5><strong class="fw-bolder">ADD ITEM</strong></h5>
@@ -83,30 +90,39 @@
                           <label id="lbl2" class="form-check-label fw-bolder" for="flexSwitchCheckChecked">SERVICES</label>
                         </div>
                       </div>
+                      <!-- {% for message in messages %}
+                        <div class="alert alert-danger text-center" role="alert">{{ message }}</div>
+                      {% endfor %} -->
                     <br>
                     <div id="main_form_div">
-                      
-                      <div class="d-flex">
-                        <input style="color: black;" class="form-control border-dark fw-bolder" type="text" placeholder="ITEM NAME" autocomplete="off" name="item_name" required>
-                        <input style="color: black;" class="form-control border-dark ms-2 fw-bolder" type="number" placeholder="ITEM HSN" name="item_hsn" required>
-                        <select style="color: black;" class="form-control ms-2 border-dark bg-light me-2" id="" name="item_unit" required>
-                          <option value="">Select a unit</option>
-                          <option value="NOS">NOS</option>
-                          <option value="BOX">BOX</option>
-                          <option value="PACKET">PACKET</option>
-                          {% if item_units %}
-                            {% for i in item_units %}
-                            <option value="{{ i.unit_name|upper }}">{{ i.unit_name|upper }}</option>
-                            {% endfor %}
-                          {% endif %}
-                          <option id="load_new_unit" hidden value=""></option>
-                        </select>
-                        <!-- <button class="btn bg-warning"><span class="fa fa-plus"></span></button> -->
-                        
-                        <button id="modal_closing" type="button" class="btn bg-warning" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo"><span class="fa fa-plus"></span></button>
-                        
+                      <div class="row" style="margin-left: -1vh;">
+                        <div class="col-md-4">
+                          <input style="color: black;" class="form-control border-secondary fw-bolder checkitemhsn" type="text" placeholder="ITEM NAME" autocomplete="off" name="item_name" id="item_name" required>
+
+                        </div>
+                        <div class="col-md-4">
+                          <div style="position: relative;">
+                            <input style="color: black;" class="form-control border-secondary ms-2 fw-bolder checkitemhsn" type="number" placeholder="ITEM HSN" name="item_hsn" id="item_hsn" oninput="validateInput()" required>
+                            <span id="validd" hidden></span>
+                            <span id="hsn-validation" style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%);"></span>
+                          </div>
+                        </div>
+                        <div class="col-md-4 d-flex" id="ko">
+                          <select class="form-control ms-2 border-dark bg-light me-2 fw-bolder text-uppercase" id="item_unit_value" name="item_unit" required>
+                            <option value="">Select a unit</option>
+                            <option value="NOS">NOS</option>
+                            <option value="BOX">BOX</option>
+                            <option value="PACKET">PACKET</option>
+                            {% if item_units %}
+                              {% for i in item_units %}
+                              <option value="{{ i.unit_name|upper }}">{{ i.unit_name|upper }}</option>
+                              {% endfor %}
+                            {% endif %}
+                            <option id="load_new_unit" hidden value=""></option>
+                          </select>
+                          <button id="modal_closing" type="button" class="btn bg-warning" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo"><span class="fa fa-plus"></span></button>
+                        </div>
                       </div>
-                    
                       <div>
                           <p></p>
                           <hr class="p-0 m-0">
@@ -117,10 +133,6 @@
                                     style="color: gray;" >PRICING</a></div>
                                 <div id="stk_" class="col text-center pb-2" ><a class="fw-bolder fs-4"
                                     style="color: gray;" >STOCKS</a></div>
-                                <!-- <div id="" class="col text-center pb-2"><a class="fw-bolder fs-4"
-                                    style="color: gray;" >FIELD3</a></div>
-                                <div id="" class="col text-center pb-2"><a class="fw-bolder fs-4"
-                                    style="color: gray;" >FIELD4</a></div> -->
                               </div>
                             </div>
                           </div>
@@ -133,29 +145,29 @@
                               </div>
                               <div class="col-sm-12 col-md-10 pb-4">
                                   <div class="text- pt-5">
-                                    <label style="user-select: none;" class="fs-4 tb" for="item_tax_1">Taxable</label>
+                                    <label style="user-select: none;" class="fs-4 tb fw-bolder" for="item_tax_1">Taxable</label>
                                     <input id="item_tax_1" class="me-3" type="radio" name="item_tax_result" required>
-                                    <label style="user-select: none;" class="fs-4 tb" for="item_tax_2">Non Taxable</label>
-                                    <input id="item_tax_2" type="radio" name="item_tax_result" required>
+                                    <label style="user-select: none;" class="fs-4 tb fw-bolder" for="item_tax_2">Non Taxable</label>
+                                    <input id="item_tax_2" type="radio" name="item_tax_result" required checked>
                                     <input id="taxable_result" type="text" name="item_taxable" hidden>
                                   </div>
                                   <br>
                                   <div hidden id="taxable_hide" class="mb-3">
                                     <div class="d-flex">
                                       <div class="w-50 me-3">
-                                        <label class="fw-bold tb fs-3" for="">GST</label><br>
-                                        <select style="color: black;background-color: white;" class="form-control fw- border-secondary fs-3" id="" placeholder="GST" name="item_gst" >
+                                        <label class="col-form-label tb fs-3" for="">GST</label><br>
+                                        <select style="color: black;background-color: white;" class="form-control fw-bolder border-secondary fs-3" id="" placeholder="GST" name="item_gst" >
                                           <option value="GST0[0%]" selected>GST0[0%]</option>
                                           <option value="GST3[3%]">GST3[3%]</option>
                                           <option value="GST5[5%]">GST5[5%]</option>
                                           <option value="GST12[12%]">GST12[12%]</option>
-                                          <option value="GST13[18%]">GST18[18%]</option>
+                                          <option value="GST18[18%]">GST18[18%]</option>
                                           <option value="GST28[28%]">GST28[28%]</option>
                                         </select>
                                       </div>
                                       <div class="w-50">
-                                        <label class="fw-bold tb fs-3" for="">IGST</label><br>
-                                        <select style="color: black;background-color: white;" class="form-control fw- border-secondary tb fs-3" id="" placeholder="GST" name="item_igst" >
+                                        <label class="col-form-label tb fs-3" for="">IGST</label><br>
+                                        <select style="color: black;background-color: white;" class="form-control fw-bolder border-secondary tb fs-3" id="" placeholder="GST" name="item_igst" >
                                           <option value="IGST0[0%]" selected>IGST0[0%]</option>
                                           <option value="IGST3[3%]">IGST3[3%]</option>
                                           <option value="IGST5[5%]">IGST5[5%]</option>
@@ -169,12 +181,12 @@
 
                                   <div class="d-flex">
                                     <div class="w-50 me-3">
-                                      <label class="tb fw-bold" for="pur_price">SALES PRICE</label><br>
-                                      <input style="color: black;background-color: white;" id="sal_price" class="form-control fw-normal border-secondary  fs-3" type="number" placeholder="Sales Price here" name="item_sale_price" required>
+                                      <label class="tb col-form-label" for="pur_price">SALES PRICE</label><br>
+                                      <input style="color: black;background-color: white;" id="sal_price" class="form-control fw-bolder border-secondary  fs-3" type="number" placeholder="Sales Price here" name="item_sale_price" required>
                                     </div>
                                     <div class="w-50">
-                                      <label class="tb fw-bold" for="">PURCHASE PRICE</label><br>
-                                      <input style="color: black;background-color: white;" id="pur_price" class="form-control fw-normal border-secondary  fs-3" type="number" placeholder="Purchase Price here" name="item_purchase_price" required>
+                                      <label class="tb col-form-label" for="">PURCHASE PRICE</label><br>
+                                      <input style="color: black;background-color: white;" id="pur_price" class="form-control fw-bolder border-secondary  fs-3" type="number" placeholder="Purchase Price here" name="item_purchase_price" required>
                                     </div>
                                   </div>
                                   <div class="text-start mt-5">
@@ -199,29 +211,29 @@
                                 <br><br>
                                   <div class="d-flex">
                                     <div class="w-50 me-3">
-                                      <label class="tb fw-bold" for="opn_stock_">OPENING STOCK</label><br>
-                                      <input style="color: black;background-color: white;" id="opn_stock_" class="form-control fw-normal border-secondary  fs-3" type="number" placeholder="Opening Stock here" name="item_opening_stock">
+                                      <label class="tb col-form-label" for="opn_stock_">OPENING STOCK</label><br>
+                                      <input style="color: black;background-color: white;" id="opn_stock_" class="form-control fw-bolder  border-secondary  fs-3" type="number" placeholder="Opening Stock here" name="item_opening_stock">
                                     </div>
                                     <div id="at_price_div" style="visibility: hidden;" class="w-50">
-                                      <label class="tb fw-bold" for="at_price">AT PRICE</label><br>
-                                      <input style="color: black;background-color: white" id="at_price" class="form-control fw-normal border-secondary  fs-3" type="number" placeholder="At Price here" name="item_at_price">
+                                      <label class="tb col-form-label" for="at_price">AT PRICE</label><br>
+                                      <input style="color: black;background-color: white" id="at_price" class="form-control fw-bolder border-secondary  fs-3" type="number" placeholder="At Price here" name="item_at_price">
                                     </div>
                                   </div>
                                   <br>
                                   <div class="d-flex">
                                     <div class="w-50 me-3">
-                                      <label class="tb fw-bold" for="date_">DATE</label><br>
-                                      <input style="color: black;background-color: white" id="date_" class="form-control fw-normal border-secondary  fs-3" type="date" placeholder=""required name="item_date">
+                                      <label class="tb col-form-label" for="date_">DATE</label><br>
+                                      <input style="color: black;background-color: white" id="date_" class="form-control fw-bolder border-secondary  fs-3" type="date" placeholder=""required name="item_date">
                                     </div>
                                     <div class="w-50">
-                                      <label class="tb fw-bold" for="at_price">MINIMUM STOCK TO MAINTAIN</label><br>
-                                      <input style="color: black;background-color: white" id="at_price" class="form-control fw-normal border-secondary  fs-3" type="number" placeholder="Purchase Price here" name="item_min_stock_maintain">
+                                      <label class="tb col-form-label" for="at_price">MINIMUM STOCK TO MAINTAIN</label><br>
+                                      <input style="color: black;background-color: white" id="min_stock" class="form-control fw-bolder border-secondary  fs-3" type="number" placeholder="Purchase Price here" name="item_min_stock_maintain">
                                     </div>
                                   </div>
                                   <div class="text-start mt-5">
                                     <button id="prev_btn" class="btn btn-primary bg-gradient  me-3" type="button">PREVIOUS</button>
-                                    <button id="" class="btn btn-primary bg-gradient  me-3" type="submit" name="save_and_next" value="save_and_next">SAVE AND NEXT</button>
-                                    <button id="" class="btn btn-primary bg-gradient" type="submit"name="save" value="save">SAVE</button>
+                                    <button id="save_and_next" class="btn btn-primary bg-gradient  me-3" type="submit" name="save_and_next" value="save_and_next">SAVE AND NEXT</button>
+                                    <button id="save" class="btn btn-primary bg-gradient" type="submit"name="save" value="save">SAVE</button>
                                   </div>
                               </div>
                               <div  class="col-sm-12 col-md-1">
@@ -279,6 +291,96 @@
 </div>
 
 <script>
+ $(document).on("click", "#save", function(){
+      console.log('save ')
+
+        $('.error-message').remove();
+
+        var itemName = $('#item_name').val();
+        var itemHsn = $('#item_hsn').val();
+        var itemUnit = $('#item_unit_value').val();
+        var taxable = $('input[name="item_tax_result"]:checked').val();
+        var salesPrice = $('#sal_price').val();
+        var purchasePrice = $('#pur_price').val();
+        console.log(itemUnit == '')
+
+            if (!itemName) $('#item_name').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">Please enter item name.</div></div>');
+            if (!itemHsn) $('#item_hsn').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">Please enter item HSN.</div></div>');
+            // if (itemUnit == '') $('#modal_closing').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">Please select item unit.</div></div>');
+            //         if (itemUnit == '') {
+            //     var $unitContainer = $('<div class="error-container"></div>');
+            //     $unitContainer.append('<div class="error-message fw-bolder" style="color:red;">Please select item unit.</div>');
+            // }
+            if (!salesPrice) $('#sal_price').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">Please enter sales price.</div></div>');
+            if (!purchasePrice) $('#pur_price').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">Please enter purchase price.</div></div>');
+
+  });
+
+  $(document).on("click", "#next_btn", function(){
+      console.log('save ')
+
+        $('.error-message').remove();
+
+        var salesPrice = $('#sal_price').val();
+        var purchasePrice = $('#pur_price').val();
+        if (!salesPrice) $('#sal_price').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">Please enter sales price.</div></div>');
+        if (!purchasePrice) $('#pur_price').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">Please enter purchase price.</div></div>');
+
+  });
+
+  
+
+
+  $(document).on("click", "#save_and_next", function(){
+      console.log('save and next')
+
+        $('.error-message').remove();
+
+        var itemName = $('#item_name').val();
+        var itemHsn = $('#item_hsn').val();
+        var itemUnit = $('#item_unit_value').val();
+        var taxable = $('input[name="item_tax_result"]:checked');
+        var salesPrice = $('#sal_price').val();
+        var purchasePrice = $('#pur_price').val();
+
+            if (!itemName) $('#item_name').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">Please enter item name.</div></div>');
+            if (!itemHsn) $('#item_hsn').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">Please enter item HSN.</div></div>');
+            // if (itemUnit == '') $('#modal_closing').after('<div class="error-message fw-bolder" style="color:red;">Please select item unit.</div>');
+            if (!salesPrice) $('#sal_price').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">Please enter sales price.</div></div>');
+            if (!purchasePrice) $('#pur_price').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">Please enter purchase price.</div></div>');
+
+  });
+
+  function validateInput() {
+        // Get the value entered by the user
+        var inputValue = document.getElementById("item_hsn").value;
+        console.log("Input value:", inputValue);
+        const validationLabel = document.getElementById("hsn-validation");
+        //const saveAndNextButton = document.getElementById("save_and_next");
+        //const saveButton = document.getElementById("save");
+
+        if (inputValue.length >= 6) {
+          console.log("Input value is valid.");
+            // Display a checkmark
+            validationLabel.innerHTML = "&#10004;"; // Checkmark symbol
+            validationLabel.style.color = "green";
+            //saveAndNextButton.disabled = false;
+            //saveButton.disabled = false;
+            //saveAndNextButton.removeAttribute("title");
+            //saveButton.removeAttribute("title");
+
+        } else {
+            // Display a cross mark
+console.log("Input value is not valid.");
+            validationLabel.innerHTML = "&#10060;"; // Cross mark symbol
+            validationLabel.style.color = "red";
+            //saveAndNextButton.disabled = true;
+            //saveButton.disabled = true;
+            //saveAndNextButton.title = "Item HSN must have at least 6 digits.";
+            //saveButton.title = "Item HSN must have at least 6 digits.";
+        }
+    }
+
   $(document).on("submit","#unit_form",function(e){
     e.preventDefault();
   $.ajax({
@@ -426,5 +528,60 @@
     })
     // set today end
 
+</script>
+
+<script>
+  $(document).on("change", function(){
+     $('.error-container').remove();
+ });
+
+ 
+ $(document).on("change", ".checkitemhsn", function(){
+  console.log('hi')
+
+  if($('#item_name').val() && $('#item_hsn').val()){
+      console.log('no')
+      $.ajax({
+          url: "{% url 'newItemCheck' %}",
+          type: "POST",
+          dataType: "json",
+          data: {
+              itemname : $("#item_name").val(),
+              hsn : $("#item_hsn").val(),
+              csrfmiddlewaretoken: '{{ csrf_token }}',
+          },
+          success: function(data) {
+              if (data.erroritemhsn) {
+                  $('#item_name').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">' + data.erroritemhsn + '.</div></div>');
+              } 
+              else if(data.erroritem){
+                  $('#item_name').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">' + data.erroritem + '.</div></div>');
+              }
+              else if(data.errorhsn){
+                  $('#item_hsn').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">' + data.errorhsn + '.</div></div>');
+              }
+              else {
+                  console.log(data);
+              }
+          },
+          error: function(xhr, status, error) {
+              console.error(xhr.responseText);
+          }
+      });
+  }
+  else {
+
+      if (!$('#item_name').val()) {
+              console.log('Item name is missing, adding error container');
+              $('#item_name').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">Please enter item name.</div></div>');
+          }
+
+     if (!$("#item_hsn").val()) {
+            console.log('HSN is missing, adding error container');
+            $('#item_hsn').after('<div class="error-container"><div class="error-message fw-bolder" style="color:red;">Please enter hsn number.</div></div>');
+        }
+
+    }
+});
 </script>
 {% endblock %}

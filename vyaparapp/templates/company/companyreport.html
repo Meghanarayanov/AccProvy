@@ -30,47 +30,51 @@
             <div class="row">
                 <div class="col-md-2 pt-4 p-3" style="background-color: white;overflow-y: scroll; height: 650px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);position: fixed;">
                     <p style="background-color:rgba(176, 199, 205, 0.4);color: black;padding: 7px;border-radius: 7px;"><b>Transaction Report</b></p>
-                    <p>Sales</p>
-                    <p>Purchase</p>
-                    <p>Day Book</p>
-                    <p>All Transactions</p>
-                    <p>Profit and Loss</p>
+                    <a href="{% url 'sales_invoice_report' %}" style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;"><p>Sales</p></a>
+                    <a href="{% url 'purchase_report' %}" style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;"><p>Purchase</p></a>
+                    <a href="{% url 'day_book_report' %}" style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;"><p>Day Book</p></a>
+                    <p><a href="{% url 'all_transactions' %}" style="color: black;  flex: 1; border-radius: 10px 0px 0px 10px;">All Transactions</a></p>
+                    <p><a href="{% url 'trial_balance' %}" style="color: black; flex: 1; border-radius: 10px 0px 0px 10px;">Trial Balance</a></p>
+                    <p><a href="{% url 'profit_loss' %}" style="color: black; flex: 1; border-radius: 10px 0px 0px 10px;">Profit and Loss</a></p>
                     <p>Bill Wise Profit</p>
-                    <p>Cash Flow</p>
-                    <p>Balance Sheet</p>
+                    <a href="{% url 'cashflow_report' %}" style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;"><p>cashflow</p></a>
+                    <a href="{% url 'balance_sheet_report' %}" style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;"><p>Balance Sheet</p></a>
 
                     <p style="background-color:rgba(176, 199, 205, 0.4);color: black;padding: 7px;border-radius: 7px;">Party Report</p>
-                    <p>Party Statement</p>
+                    <p><a href="{% url 'party_statement' %}" style="color: black;  flex: 1; border-radius: 10px 0px 0px 10px;">Party Statement</a></p>
                     <p>Party Wise Profit and Loss</p>
-                    <p>All Parties</p>
-                    <p>Party Report By Item</p>
-                    <p>Sale Purchase By Party</p>
+                    <a style="color: rgba(100, 115, 141, 255); text-decoration: none;" href="{% url 'allparties' %}"><p>All Parties</p></a>
+                    <a style="color: rgba(100, 115, 141, 255); text-decoration: none;" href="{% url 'Party_Report_By_Item' %}"><p>Party Report By Item</p></a>
+                    <a style="color: rgba(100, 115, 141, 255); text-decoration: none;" href="{% url 'sale_purchaseby_party' %}"><p>Sale Purchase By Party</p></a>
                     <p>Sale Purchase By Party Group</p>
+                    <p><a href="{% url 'outstanding_payables' %}" style="color: black;  flex: 1; border-radius: 10px 0px 0px 10px;">Outstanding Payables</a></p>
+                    <a href="{% url 'outstanding_receivable' %}" style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;"><p>Oustanding Receivable</p></a>
 
 
                     <p style="background-color:rgba(176, 199, 205, 0.4);color: black;padding: 7px;border-radius: 7px;">GST Report</p>
-                    <p>GSTR 1</p>
-                    <p>GSTR 2</p>
-                    <p>GSTR 3 B</p>
-                    <p>GSTR 9</p>
-                    <p>Sale Summary By HSN</p>
+                    <p><a style="color: rgba(100, 115, 141, 255); text-decoration: none;" href="{% url 'gstrnew1' %}">GSTR 1</a></p>
+                    <p><a style="color: rgba(100, 115, 141, 255); text-decoration: none;" href="{% url 'gstrr2' %}">GSTR 2</a></p>
+                    <p><a style="color: rgba(100, 115, 141, 255); text-decoration: none;" href="/gstr3b">GSTR 3 B</a></p>
+                    <p><a style="color: rgba(100, 115, 141, 255); text-decoration: none;" href="/gstr9">GSTR 9</a></p>
+                    <p><a style="color: rgba(100, 115, 141, 255); text-decoration: none;" href="{% url 'sales_summary' %}">Sale Summary By HSN</a></p>
 
                     <p style="background-color:rgba(176, 199, 205, 0.4);color: black;padding: 7px;border-radius: 7px;">Item/Stock Report</p>
-                    <p>Stock Summary</p>
+                    <a href="{% url 'stock_summary' %}" style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;"><p>Stock Summary</p></a>
+
                     <p>Item Serial Report</p>
                     <p>Item Batch Report</p>
-                    <p>Item Report By Party</p>
+                    <p><a style="color: rgba(100, 115, 141, 255); text-decoration: none;" href="{% url 'item_report_party' %}">Item Report By Party</a></p>
                     <p>Item Wise Profit And Loss</p>
-                    <p>Low Stock Summary</p>
-                    <p>Stock Details</p>
+                    <a style="color: rgba(100, 115, 141, 255); text-decoration: none;" href="{% url 'Low_stock_report' %}"><p>Low Stock Summary</p></a>
+                    <p><a style="color: rgba(100, 115, 141, 255); text-decoration: none;" href="{% url 'stock_details' %}">Stock Details</a></p>
                     <p>Item Details</p>
-                    <p>Sale/Purchase Report By Item Category</p>
+                    <p><a style="color: black; text-decoration: none;" href="{% url 'sales_or_purchase_report_by_item' %}">Sale/Purchase Report By Item Category</a></p>
                     <p>Stock Summary Report By Item Category</p>
                     <p>Item Wise Discount</p>
 
                     <p style="background-color:rgba(176, 199, 205, 0.4);color: black;padding: 7px;border-radius: 7px;">Business Status</p>
-                    <p>Bank Statement</p>
-                    <p>Discount Report</p>
+                    <a style="color: black; text-decoration: none" href="{% url 'bank_statement_report' %}" ><p>Bank Statement</p></a>
+                    <a href="{% url 'discount_report' %}">Discount Report</a>
 
                     <p style="background-color:rgba(176, 199, 205, 0.4);color: black;padding: 7px;border-radius: 7px;">Taxes</p>
                     <p>GST Report</p>
@@ -79,21 +83,22 @@
                     <p>TCS Receivable</p>
 
                     <p style="background-color:rgba(176, 199, 205, 0.4);color: black;padding: 7px;border-radius: 7px;">Expenses Report</p>
-                    <p>Expenses</p>
+                    <a href="{% url 'expense_report' %}" style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;"><p>Expenses</p></a>
                     <p>Expenses Category Report</p>
                     <p>Expenses item Report</p>
 
                     <p style="background-color:rgba(176, 199, 205, 0.4);color: black;padding: 7px;border-radius: 7px;">Sale Order Report</p>
-                    <p>Sale Orders</p>
-                    <p>Sale Order Item</p>
-
+                    <a href="{% url 'sales_report' %}" style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;"><p>sales report</p></a>
+                    <a style="color: rgba(100, 115, 141, 255); text-decoration: none;" href="{% url 'sale_order_item' %}"><p>Sale Order Item</p></a>
+                    <a href="{% url 'purchase_order_details_report' %}" style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;"><p>Purchase Order Details</p></a>
+                    <a href="{% url 'purchase_order_item' %}" style="color: rgba(100, 115, 141, 255); text-decoration: none; flex: 1; border-radius: 10px 0px 0px 10px;"><p>Purchase Order Item</p></a>
                     <p style="background-color:rgba(176, 199, 205, 0.4);color: black;padding: 7px;border-radius: 7px;">Other Income Report</p>
                     <p>Other Income</p>
                     <p>Other Income Category Report</p>
                     <p>Other Income Item Report</p>
 
                     <p style="background-color:rgba(176, 199, 205, 0.4);color: black;padding: 7px;border-radius: 7px;">Loan Accounts</p>
-                    <p>Loan Statement</p>
+                    <a href="{% url 'loan_account_report' %}" style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;"><p>Loan Statement</p></a>
 
 
                     

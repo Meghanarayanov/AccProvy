@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script> -->
+
+</head>
+<body>
+    
+
+
+
+
+
+    
+
+            <div class="container" >
+                
+                <div class="row">
+                    <center>
+                        <h1>{{companyName}}</h1>
+                        <h2>All Transaction Details </h2>
+                        <h4 {% if start_date == None or end_date == None  %} style="display: none;" {% endif %}>{{start_date}} to {{end_date}}</h4>
+                    
+                    </center>
+                </div>   
+                <div class="container-fluid table-responsive-md" id="tableDiv" >
+                    <table class="table mt-4" id="tableStock" style="border: 1px solid gray; margin-top: 10px;padding: 3px;">
+                        <thead >
+                            <tr class="text-center mt-5" >
+                                <th> DATE </th>
+                                <th> PARTY NAME </th>
+                                <th> TYPE  </th>
+                                <th> TOTAL AMOUNT   </th>
+                                <th> RECEIVED   </th>
+                                <th> BALANCE </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in stocklist %}
+                                <tr style="color: black;padding: 5px;">
+                                    <td class="" style="color: black;" >{{item.0}}</td>
+                                    <td class="p-opening-stock" style="color: black;" >{{item.1}}</td>
+                                    <td class="p-quantity" style="color: black;" >{{item.2}}</td>
+                                    <td class="" style="color: black;" >{{item.3}}</td>
+                                    <td class="" style="color: black;" >{{item.4}}</td>
+                                    <td class="" style="color: black;" >{{item.5}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table><br>
+                    <div style="display: flex;justify-content: space-between;">
+                        <h5 for="">Total Money In :<b id="moneyIn" class="ml-2">{{moneyIn}}</b></h5>
+                        <h5 for="">Total Money Out : <b id="moneyOut" class="ml-2">{{moneyOut}}</b></h5>
+                    </div>
+                </div>
+            </div>
+                      
+                
+    
+      
+
+
+</body>
+</html>

@@ -18,7 +18,7 @@
   <div class="container-fluid">
 
     
-
+    {% if data %}
      <!-- <h3 class="text-center"><b style=" margin-bottom: 20px;">COMPANY REQUESTS</b></h3> -->
       <div style="overflow-x:auto;">  
         <table class="table table-hover  mt-5 " style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
@@ -38,11 +38,17 @@
             <tbody>
                 {% for a in data %}
               <tr>
-                <td>{{a.id}}</th>
+                <td>{{forloop.counter}}</th>
                 <td> <b><a href="{% url 'dcompany_request_overview' a.id %}" style="color: black;">{{a.company_name}} </a></b></td>
                 <td>{{a.user.email}}</td>
                 <td>{{a.contact}}</td>
-                <td>{{a.dateperiod.payment_terms_number}} {{a.dateperiod.payment_terms_value}}</td>
+                <td>{% if a.dateperiod %}
+                  {{a.dateperiod.payment_terms_number}} {{a.dateperiod.payment_terms_value}}
+                  
+                  {% else %}
+                  <b style="color: green;">1 Month Trial</b>
+                  {% endif %}
+                </td>
                 <td>{{a.End_date}}</td>
                 <td><a href="{% url 'distributor_accept_company' a.id %}" class="btn btn-primary m-1">Accept</a>
                 <a href="{% url 'distributor_reject_company' a.id %}" class="btn btn-danger m-1">Reject</a></td>
@@ -51,6 +57,10 @@
             </tbody>
           </table> 
         </div>
+        {% else %}
+
+            <center><img src="{% static 'images\no-data-file.png' %}" alt="" class="mt-5 pt-5"></center>
+            {% endif %}
 
   </div>
 </div>

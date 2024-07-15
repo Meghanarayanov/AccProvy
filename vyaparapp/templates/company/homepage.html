@@ -6,20 +6,36 @@
 {% load static %}
 
 
+
 <div class="body-wrapper">
       <div class="container-fluid">
         <!--  Row 1 -->
-        <div class="row mb-5 mt-3">
-          <div class="col-md-3"></div>
-          <div class="col-md-5">
-            
-            <a href=""  id="b1" class="btn  text-white" style="margin-right: 10px; background-color: rgb(252, 3, 3,0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add Sale  <i class="fa fa-plus"></i></a>
-            <a href="" id="b2" class="btn  text-white" style="margin-right: 10px;background-color: rgba(3, 161, 252, 0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add Purchase  <i class="fa fa-plus"></i></a>
-            <a href="" id="b3" class="btn text-primary mt-1" style="border-radius: 20px;border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">Add More  <i class="fa fa-plus"></i></a>
 
-          </div>
-          <div class="col"></div>
+        {% if staff.position == 'company' %}
+          {% if notification  %}
+            <div class="alert alert-danger d-flex" role="alert">
+              <b>🚀 Your Payment Term ends on , &nbsp; </b>
+              <b><span style="color: rgb(12, 175, 42); font-size: medium;"> {{staff.company.End_date}}</span></b>
+              <a href="{% url 'com_notification' %}" class="alert-link"> .  <u>click here</u></a>&nbsp; <b> to extend your payment term.</b>
+            </div>
+          {% endif %}
+        {% endif %}
+
+        <div class="d-flex justify-content-center py-2 px-0">
+            <a href="{% url 'add_salesinvoice' %}" id="b1" class="btn  text-white"
+                style="margin-right: 10px; background-color: rgb(252, 3, 3,0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                Add Sale <i class="fa fa-plus"></i>
+            </a>
+            <a href="{% url 'add_purchasebill' %}" id="b2" class="btn  text-white"
+                style="margin-right: 10px;background-color: rgba(3, 161, 252, 0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                Add Purchase <i class="fa fa-plus"></i>
+            </a>
+            <a href="" id="b3" class="btn text-primary"
+                style="border-radius: 20px;border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                Add More <i class="fa fa-plus"></i>
+            </a>
         </div>
+        <p></p>
         <div class="row">
           <div class="col-lg-8 d-flex align-items-strech" >
             <div class="card w-100" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" >
@@ -282,5 +298,7 @@
        
       </div>
   </div> 
- 
+
+
+  
 {% endblock  %}

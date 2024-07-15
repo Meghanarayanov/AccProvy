@@ -362,7 +362,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VYAPAR</title>
+    <title>AccProVy</title>
   <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/favicon.png' %}" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -379,14 +379,23 @@
 
         @media (max-width:768px) {
             #h1 {
-                font-size: 20px;
-                margin-top: 10px !important;
+                font-size: 22px;
+                margin-top: 20px !important;
+                margin-right: 15px !important;
+                font-weight: bold !important;
+                margin-bottom: 5px !important;
+               
+            }#r1{
+                width: 100%;
+                padding: 0px !important;
             }
 
             .main {
                 padding: 0px !important;
                 margin: 0px !important;
-                margin-left: 40px !important;
+                margin-left: 15px !important;
+                width: 100% !important;
+                margin-right:0px !important;
 
             }
 
@@ -406,12 +415,12 @@
 </head>
 
 <body style="background-color: #455a81;padding-bottom: 20px;">
-    <div class="main m-5 p-5 pt-1 mt-1" style="padding-right: 20px;padding-bottom: 20px;">
+    <div class="main ml-5 mr-5 p-5 " style="padding-right: 20px;padding-bottom: 20px;">
         <h1 class="text-center" id="h1"
             style="color: rgb(255, 255, 255);text-shadow: 2px 2px 4px #000000; margin-bottom: 40px;">COMPANY REGISTERATION
         </h1>
         
-        <div class="row "
+        <div class="row " id="r1"
             style="border: 1px solid black;width: 100%; border-radius: 20px;background-color: white;box-shadow: 0 6px 8px 0 rgba(0, 0, 0, 0.9), 0 6px 20px 0 rgba(0, 0, 0, 0.9);">
             <div class="col-lg-6 col-md-10 d-flex "
                 style="border-right:1px solid black ;border-bottom: 1px solid black;">
@@ -453,7 +462,7 @@
                                 <!-- <input type="text" id="cname" name="cname" class="form-control"
                                     placeholder="enter company name" required><br> -->
 
-                                <input type="text" id="eid" name="eid" class="form-control" placeholder="enter email"
+                                <input type="email" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" id="eid" name="eid" class="form-control" placeholder="enter email"
                                     required><br>
 
 
@@ -463,7 +472,7 @@
 
 
 
-                                <input type="number" id="ph" name="ph" class="form-control"
+                                <input type="text" id="ph" name="ph" class="form-control" pattern="[0-9]{10}"
                                     placeholder="enter phone number" required><br>
 
                                 <input type="password" id="pass" name="pass" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" class="form-control"
@@ -527,6 +536,15 @@
    
 
     }
+    function validatePhoneNumber() {
+    var phoneNumberVal = $('#ph').val();
+    var regPhoneNumber = /^\d{10}$/; 
+    if (regPhoneNumber.test(phoneNumberVal)) {
+        $('#ph').css('border', '2px solid green'); 
+    } else {
+        $('#ph').css('border', '2px solid red'); 
+    }
+}
     </script>
 </body>
 

@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VYAPAR</title>
+    <title>AccProVy</title>
   <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/favicon.png' %}" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -93,7 +93,7 @@
 
 
 
-                                <input type="text" id="eid" name="eid" class="form-control" placeholder="enter email"
+                                <input type="email"  pattern="[^@\s]+@[^@\s]+\.[^@\s]+" id="eid" name="eid" class="form-control" placeholder="enter email"
                                     required><br>
 
 
@@ -103,7 +103,7 @@
 
 
 
-                                <input type="number" id="ph" name="ph" class="form-control"
+                                <input type="number" id="ph" name="ph" class="form-control"  oninput="validatePhoneNumber()"
                                     placeholder="enter phone number" required><br>
 
                                 <input type="password" id="pass" name="pass" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" class="form-control"
@@ -151,6 +151,17 @@
             } else
                 $('#message').html('Password Is Not Matching').css('color', 'red');
         });
+
+
+        function validatePhoneNumber() {
+    var phoneNumberVal = $('#ph').val();
+    var regPhoneNumber = /^\d{10}$/; 
+    if (regPhoneNumber.test(phoneNumberVal)) {
+        $('#ph').css('border', '2px solid green'); 
+    } else {
+        $('#ph').css('border', '2px solid red'); 
+    }
+}
     </script>
 </body>
 

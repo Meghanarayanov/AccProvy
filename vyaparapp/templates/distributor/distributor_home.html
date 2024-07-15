@@ -71,17 +71,21 @@
 <div class="body-wrapper">
    <div class="container-fluid" >
 
-    
+    {% if distributor %}
+      {% if notification  %}
+        <div class="alert alert-danger d-flex" role="alert">
+          <b>🚀 Your Payment Term ends on , &nbsp; </b>
+          <b><span style="color: rgb(12, 175, 42); font-size: medium;"> {{distributor.End_date}}</span></b>
+          <a href="{% url 'distributor_notification' %}" class="alert-link"> .  <u>click here</u></a>&nbsp; <b> to extend your payment term.</b>
+        </div>
+      {% endif %}
+    {% endif %}
 
 
     <div class="row mt-5">
       <div class="col-md-4">
         <div class="card" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" >
           <div class="card-body">
-
-
-            
-
             <div class="row">
               <div class="col-md-9">
                 <a href="{% url 'dcompany_request' %}">

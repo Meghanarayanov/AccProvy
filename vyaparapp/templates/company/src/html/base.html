@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VYAPAR</title>
+  <title>AccProVy</title>
   <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/favicon.png' %}" />
   <link rel="stylesheet" href="{% static 'assets/css/styles.min.css' %}" />
   <!-- Font Awesome CSS CDN -->
@@ -18,7 +18,10 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
-
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     a {
       text-decoration: none;
@@ -55,7 +58,7 @@
         <div class="brand-logo d-flex align-items-center justify-content-between p-4 mt-2">
           <a href="" class="text-nowrap logo-img mr-2 " style="display: flex;text-decoration: none;">
             <img src="{% static 'assets/images/logos/favicon.png' %}" width="30" height="30" alt="" />
-            <h3 style="font-family: 'Times New Roman', Times, serif; "><b class="p-3">VYAPAR</b></h3>
+            <h3 style="font-family: 'Times New Roman', Times, serif; "><b class="p-3">AccProVy</b></h3>
           </a>
           <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
             <i class="ti ti-x fs-8"></i>
@@ -111,8 +114,8 @@
             </li>
             {% endif %}
             
-            <li class="sidebar-item" style="display: flex; justify-content: space-between;">
-              <a class="sidebar-link mt-2" href="{% url 'view_parties' %}" aria-expanded="false"
+            <!-- <li class="sidebar-item" style="display: flex; justify-content: space-between;">
+              <a class="sidebar-link mt-2" href="{% url 'view_parties' 0 %}" aria-expanded="false"
                 style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;">
                 <span>
                   <b style="margin-left: 10px;"><i class="ti ti-users"></i></b>
@@ -124,6 +127,21 @@
                 <span>
                   <b style="margin-right: 10px;"><i class="ti ti-plus"></i></b>
                 </span>
+              </a>
+            </li> -->
+
+            <div class="position-relative">
+              <div class="position-absolute end-0 bottom-0" style="z-index: 1;margin-bottom: -2.9em;margin-right: 0.9rem;">
+                <a style="color: black;" href="{% url 'add_parties' %}"><span class="fs-5 fa fa-plus-circle"></span></a>
+              </div>
+            </div>
+            <li class="sidebar-item">
+              <a class="sidebar-link mt-2" href="{% url 'view_parties' 0 %}" aria-expanded="false"
+                style="color: black;background-color: rgb(210, 235, 241,0.5);">
+                <span>
+                  <b style="margin-left: 10px;"><i class="ti ti-users"></i></b>
+                </span>
+                <span class="hide-menu"><b>Parties</b></span>
               </a>
             </li>
 
@@ -152,44 +170,64 @@
               </button>
               <div class="dropdown-container" style="background-color: aliceblue;padding: 20px;justify-content: center;">
                 {% if allmodules.sales_invoice != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                    <!-- <i class="ti ti-mail fs-6"></i> -->
-                    <p class="mb-0 fs-3">Sale Invoices</p>
-                  </a>
-                  <hr>
+                <a href="{% url 'view_salesinvoice' %}" class="d-flex align-items-center gap-2 dropdown-item">
+                  <!-- <i class="ti ti-mail fs-6"></i> -->
+                  <div class="d-flex">
+                    <p class="mb-0 fs-3">Sales Invoice</p>
+                    <a href="{% url 'add_salesinvoice' %}"><i class="fa fa-plus text-dark" ></i></a>
+                  </div>
+                </a>
+                <hr>
                   {% endif %}
                   {% if allmodules.Estimate != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                  <a href="{% url 'estimate_quotation' %}" class="d-flex align-items-center gap-2 dropdown-item">
                     <!-- <i class="ti ti-mail fs-6"></i> -->
-                    <p class="mb-0 fs-3">Estimate/ Quotation</p>
+                    
+                    <div class="d-flex">
+                      <p class="mb-0 fs-3">Estimate/ Quotation</p>
+                      <a href="{% url 'create_estimate' %}"><i class="fa fa-plus text-dark" ></i></a>
+                    </div>
                   </a>
                   <hr>
                   {% endif %}
                   {% if allmodules.Payment_in != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                  <a href="{% url 'paymentIn' %}" class="d-flex align-items-center gap-2 dropdown-item">
                     <!-- <i class="ti ti-list-check fs-6"></i> -->
-                    <p class="mb-0 fs-3">Payment In</p>
+                    <!-- <p class="mb-0 fs-3">Payment In</p> -->
+                    <div class="d-flex">
+                      <p class="mb-0 fs-3">Payment In</p>
+                      <a href="{% url 'createPaymentIn' %}"><i class="fa fa-plus text-dark" ></i></a>
+                    </div>
                   </a>
                   <hr>
                   {% endif %}
                   {% if allmodules.sales_order != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                  <a href="{% url 'sale_order' %}" class="d-flex align-items-center gap-2 dropdown-item">
                     <!-- <i class="ti ti-user fs-6"></i> -->
-                    <p class="mb-0 fs-3">Sale Order</p>
+                    <div class="d-flex">
+                      <p class="mb-0 fs-3">Sale Order</p>
+                      <a href="{% url 'saleorder_create' %}"><i class="fa fa-plus text-dark" ></i></a>
+                    </div>
                   </a>
                   <hr>
                   {% endif %}
                   {% if allmodules.Delivery_challan != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                  <a href="{% url 'delivery_challan' %}" class="d-flex align-items-center gap-2 dropdown-item">
                     <!-- <i class="ti ti-mail fs-6"></i> -->
-                    <p class="mb-0 fs-3">Delivery Challan</p>
+                    <div class="d-flex">
+                      <p class="mb-0 fs-3">Delivery Challan</p>
+                      <a href="{% url 'createDeliveryChallan' %}"><i class="fa fa-plus text-dark" ></i></a>
+                    </div>
                   </a>
                   <hr>
                   {% endif %}
                   {% if allmodules.sales_return != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                  <a href="{% url 'creditnote_list' %}" class="d-flex align-items-center gap-2 dropdown-item">
                     <!-- <i class="ti ti-list-check fs-6"></i> -->
-                    <p class="mb-0 fs-3">Sale Return/ Cr. Note</p>
+                     <div class="d-flex">
+                      <p class="mb-0 fs-3">Sale Return/ Cr.Note</p>
+                      <a href="{% url 'create_sale' %}"><i class="fa fa-plus text-dark" ></i></a>
+                    </div>
                   </a>
                   <hr>
                   {% endif %}
@@ -213,30 +251,42 @@
               </button>
               <div class="dropdown-container" style="background-color: aliceblue;padding: 20px;justify-content: center;">
                 {% if allmodules.Purchase_bills != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                    <!-- <i class="ti ti-mail fs-6"></i> -->
+                <a href="{% url 'view_purchasebill' %}" class="d-flex align-items-center gap-2 dropdown-item">
+                  <!-- <i class="ti ti-mail fs-6"></i> -->
+                  <div class="d-flex">
                     <p class="mb-0 fs-3">Purchase Bills</p>
-                  </a>
-                  <hr>
+                    <a href="{% url 'add_purchasebill' %}"><i class="fa fa-plus text-dark" ></i></a>
+                  </div>
+                </a>
+                <hr>
                   {% endif %}
                   {% if allmodules.Payment_out != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                  <a href="{% url 'view_paymentout' %}" class="d-flex align-items-center gap-2 dropdown-item">
                     <!-- <i class="ti ti-mail fs-6"></i> -->
-                    <p class="mb-0 fs-3">Payment Out</p>
+                    <div class="d-flex">
+                      <p class="mb-0 fs-3">Payment Out</p>
+                      <a href="{% url 'add_paymentout' %}"><i class="fa fa-plus text-dark" ></i></a>
+                    </div>  
                   </a>
                   <hr>
                   {% endif %}
                   {% if allmodules.Purchase_order != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                  <a href="{% url 'view_purchaseorder' %}" class="d-flex align-items-center gap-2 dropdown-item">
                     <!-- <i class="ti ti-list-check fs-6"></i> -->
-                    <p class="mb-0 fs-3">Purchase Order</p>
+                    <div class="d-flex">
+                      <p class="mb-0 fs-3">Purchase Order</p>
+                      <a href="{% url 'add_purchaseorder' %}"><i class="fa fa-plus text-dark" ></i></a>
+                    </div>
                   </a>
-                  <hr>
+                  <br>
                   {% endif %}
                   {% if allmodules.Purchase_return != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                  <a href="{% url 'view_purchasedebit' %}" class="d-flex align-items-center gap-2 dropdown-item">
                     <!-- <i class="ti ti-user fs-6"></i> -->
-                    <p class="mb-0 fs-3">Purchase Return/ Dr. Note</p>
+                    <div class="d-flex">
+                    <p class="mb-0 fs-3">Purchase Return/ Dr.Note</p>
+                    <a href="{% url 'add_debitnote' %}"><i class="fa fa-plus text-dark"></i></a>
+                  </div>
                   </a>
                   <hr>
                   {% endif %}
@@ -248,13 +298,19 @@
               
             </li>
 
-            <li class="sidebar-item">
-              <a class="sidebar-link mt-2" href="" aria-expanded="false"
-                style="color: black;background-color: rgb(210, 235, 241,0.5);">
+            <li class="sidebar-item" style="display: flex; justify-content: space-between;">
+              <a class="sidebar-link mt-2" href="{% url 'expense' %}" aria-expanded="false"
+                style="color: black; background-color: rgb(210, 235, 241, 0.5); flex: 1; border-radius: 10px 0px 0px 10px;">
                 <span>
                   <b style="margin-left: 10px;"><i class="fa fa-wallet"></i></b>
                 </span>
                 <span class="hide-menu"><b>Expenses</b></span>
+              </a>
+              <a href="{% url 'newexpenses' %}" class="sidebar-link  mt-2 plus-icon"
+                style="background-color: rgb(210, 235, 241, 0.5); border-radius: 0px 10px 10px 0px;">
+                <span>
+                  <b style="margin-right: 10px;"><i class="fa fa-plus text-dark"></i></b>
+                </span>
               </a>
             </li>
             
@@ -269,14 +325,19 @@
               </button>
               <div class="dropdown-container" style="background-color: aliceblue;padding: 20px;justify-content: center;">
                 {% if allmodules.Bank_account != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                <div class="position-relative">
+                  <div class="position-absolute end-0 bottom-0" style="z-index: 1;margin-bottom: -1.6em;margin-right: 0rem;">
+                    <a style="color: black;" href="{% url 'bank_create' %}"><span class="fs-5 fa fa-plus-circle"></span></a>
+                  </div>
+                </div>
+                  <a href="{% url 'banks_list' 0 %}" class="d-flex align-items-center gap-2 dropdown-item">
                     <!-- <i class="ti ti-mail fs-6"></i> -->
                     <p class="mb-0 fs-3">Bank Accounts</p>
                   </a>
                   <hr>
                   {% endif %}
                   {% if allmodules.Cash_in_hand != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                  <a href="{% url 'view_cashinhand' %}" class="d-flex align-items-center gap-2 dropdown-item">
                     <!-- <i class="ti ti-mail fs-6"></i> -->
                     <p class="mb-0 fs-3">Cash In Hand</p>
                     
@@ -284,7 +345,7 @@
                   <hr>
                   {% endif %}
                   {% if allmodules.cheques != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                  <a href="{% url 'cheque_list' %}" class="d-flex align-items-center gap-2 dropdown-item">
                     <!-- <i class="ti ti-list-check fs-6"></i> -->
                     <p class="mb-0 fs-3">Cheques</p>
                     
@@ -292,14 +353,17 @@
                   <hr>
                   {% endif %}
                   {% if allmodules.Loan_account != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                    <!-- <i class="ti ti-user fs-6"></i> -->
-                    <p class="mb-0 fs-3">Loan Accounts</p>
+                  <a href="{% url 'loan_accounts' %}" class="d-flex align-items-center gap-2 dropdown-item">
+                    <!-- <i class="ti ti-mail fs-6"></i> -->
+                    <div class="d-flex">
+                      <p class="mb-0 fs-3">Loan Accounts</p>
+                      <a href="{% url 'add_loan_accounts' %}"> <i class=" fa fa-plus text-dark"></i></a>
+                    </div>
                   </a>
                   <hr>
                   {% endif %}
                   {% if allmodules.Upi != Null %}
-                  <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                  <a href="{% url 'upilist' %}" class="d-flex align-items-center gap-2 dropdown-item">
                     <!-- <i class="ti ti-user fs-6"></i> -->
                     <p class="mb-0 fs-3">UPI</p>
                   </a>
@@ -341,10 +405,17 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link nav-icon-hover" href="javascript:void(0)">
+              {% if staff.position == 'company' %}
+              <a class="nav-link nav-icon-hover" href="{% url 'com_notification' %}">
                 <i class="ti ti-bell-ringing"></i>
                 <div class="notification bg-primary rounded-circle"></div>
               </a>
+              {% else %}
+              <a class="nav-link nav-icon-hover" href="">
+                <i class="ti ti-bell-ringing"></i>
+                <div class="notification bg-primary rounded-circle"></div>
+              </a>
+              {% endif %}
             </li>
           </ul>
 
@@ -424,7 +495,7 @@
   <script src="{% static 'assets/libs/apexcharts/dist/apexcharts.min.js' %}"></script>
   <script src="{% static 'assets/libs/simplebar/dist/simplebar.js' %}"></script>
   <script src="{% static 'assets/js/dashboard.js' %}"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
   <script>
     /* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
     var dropdown = document.getElementsByClassName("dropdown-btn");

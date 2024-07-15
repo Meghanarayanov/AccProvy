@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VYAPAR</title>
+  <title>AccProVy</title>
   <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/favicon.png' %}" />
   <link rel="stylesheet" href="{% static 'assets/css/styles.min.css' %}" />
     <!-- Font Awesome CSS CDN -->
@@ -29,7 +29,7 @@
         <div class="brand-logo d-flex align-items-center justify-content-between p-4 mt-2">
           <a href="" class="text-nowrap logo-img mr-2" style="display: flex;">
             <img src="{% static 'assets/images/logos/favicon.png' %}" width="30" height="30" alt="" />
-            <h3  style="font-family: 'Times New Roman', Times, serif;"><b class="p-3">VYAPAR</b></h3>
+            <h3  style="font-family: 'Times New Roman', Times, serif;"><b class="p-3">AccProVy</b></h3>
           </a>
           <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
             <i class="ti ti-x fs-8"></i>
@@ -74,7 +74,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link nav-icon-hover" href="">
+              <a class="nav-link nav-icon-hover" href="{% url 'distributor_notification' %}">
                 <i class="ti ti-bell-ringing"></i>
                 <div class="notification bg-primary rounded-circle"></div>
               </a>

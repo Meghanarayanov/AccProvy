@@ -1,6 +1,6 @@
 <!-- create by athul -->
 
-{% extends 'staff/staffbase.html' %}
+{% extends 'company/src/html/base.html' %}
 
 {% block content %}
 {% load static %}
@@ -10,7 +10,7 @@
          .h1{
              font-size: 15px;
              
-             
+                
          }
          h2{
             font-size: 18px !important;
@@ -195,7 +195,7 @@
                  </div> -->
                  <div class="row">
                      <div class="col-md-4"></div>
-                     <div class="col-md-4"><a href="{% url 'editstaff_profile' staff.id %}" class="btn btn-danger mt-5 m-3" style="width: 100%;font-weight: bold;">Edit Profile</a></div>
+                     <div class="col-md-4"><a href="{% url 'editstaff_profile' %}" class="btn btn-danger mt-5 m-3" style="width: 100%;font-weight: bold;">Edit Profile</a></div>
                      
                      <div class="col-md-4"></div>
                  </div>

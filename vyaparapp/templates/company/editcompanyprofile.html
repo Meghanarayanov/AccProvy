@@ -58,14 +58,14 @@
 <body style="background-color: rgba(176, 199, 205, 0.4);">
     <div class="body-wrapper">
         <div class="container-fluid">
-
+     
             <div class="container p-5" >
                 <form action="{% url 'editcompanyprofile_action' %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row mb-5" style="height: 300px;" >
                     <div class="col-md-4" >
-                        {% if company.profile_pic %}
-                        <img   class="img-thumbnail" src="{{ company.profile_pic.url }}" style="width: 100%;height: 65%;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" alt="">
+                        {% if staff.company.profile_pic %}
+                        <img   class="img-thumbnail" src="{{ staff.company.profile_pic.url }}" style="width: 100%;height: 65%;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" alt="">
                         {% else %}
                         <img src="{% static 'assets/images/profile/user-1.jpg' %}"  style="width: 100%;height: 65%;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);"
                           class="img-thumbnail">
@@ -77,7 +77,7 @@
                         <div class="row p-3" id="cname" style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                            
                                 <label for=""><b>Company Name</b></label>
-                                <input type="text" class="form-control" name="cname"  value="{{company.company_name}}" style="border: 1px solid skyblue;" required>
+                                <input type="text" class="form-control" name="cname"  value="{{staff.company.company_name}}" style="border: 1px solid skyblue;" required>
 
                         </div>
                         <div class="row mt-3"  style="background-color: rgba(176, 199, 205, 0.4);"></div>
@@ -85,20 +85,20 @@
                             <div class="col-md-5 mt-2" id="label">Owner</div>
                             <div class="col">
                                 
-                                <input type="text" class="form-control" name="oname" id="oname" value="{{company.user.first_name}} {{company.user.last_name}}" style="border: 1px solid skyblue;" readonly>
+                                <input type="text" class="form-control" name="oname" id="oname" value="{{staff.company.user.first_name}} {{staff.company.user.last_name}}" style="border: 1px solid skyblue;" readonly>
                             </div>   
                         </div>
                         
                         <div class="row ml-3 p-2" style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                             <div class="col-md-5 pt-2" id="label">Email</div>
                             <div class="col pt-2">
-                                <input type="text" class="form-control" name="email" id="email" value=" {{company.user.email}}" style="border: 1px solid skyblue;" required>
+                                <input type="email" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" class="form-control" name="email" id="email" value=" {{staff.company.user.email}}" style="border: 1px solid skyblue;" required>
                                 </div>
                         </div>
                         <div class="row" style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
                             <div class="col-md-5 pt-4  pb-3 p-3" id="label">Contact</div>
                             <div class="col pt-3 pb-3">
-                                <input type="text" class="form-control" name="ph" id="ph" value="{{company.contact}}" style="border: 1px solid skyblue;" required>
+                                <input type="text" class="form-control" name="ph" id="ph" value="{{staff.company.contact}}" style="border: 1px solid skyblue;" pattern="[0-9]{10}" required>
                                 </div>
                         </div>
 
@@ -109,20 +109,20 @@
                         <div class="row">
                             <div class="col-md-5 pt-3 pb-3" id="label">Address</div>
                             <div class="col pt-3">
-                                <input type="text" class="form-control" name="address" id="address" value="{{company.address}}" style="border: 1px solid skyblue;" required>
+                                <input type="text" class="form-control" name="address" id="address" value="{{staff.company.address}}" style="border: 1px solid skyblue;" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-5 pt-3 pb-3" id="label">City</div>
                             <div class="col pt-3">
-                                <input type="text" class="form-control" name="city" id="city" value="{{company.city}}" style="border: 1px solid skyblue;" required>
+                                <input type="text" class="form-control" name="city" id="city" value="{{staff.company.city}}" style="border: 1px solid skyblue;" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-5 pt-3 pb-3" id="label">State</div>
                             <div class="col pt-3">
                                 <select type="text" class="form-control" id="state" name="state"  style="border: 1px solid skyblue;">
-                                    <option value="{{company.state}}" selected>{{company.state}}</option>
+                                    <option value="{{staff.company.state}}" selected>{{staff.company.state}}</option>
                                     <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
                                     <option value="Andhra Predhesh">Andhra Predhesh</option>
                                     <option value="Arunachal Predesh">Arunachal Predesh</option>
@@ -168,23 +168,23 @@
                         <div class="row">
                             <div class="col-md-5 pt-3 pb-3" id="label">Country</div>
                             <div class="col pt-3">
-                                <input type="text" class="form-control" name="country" id="country" value="{{company.country}}" style="border: 1px solid skyblue;" required>
+                                <input type="text" class="form-control" name="country" id="country" value="{{staff.company.country}}" style="border: 1px solid skyblue;" required>
                             </div>    
                         </div>
                         <div class="row">
                             <div class="col-md-5 pt-3 pb-3" id="label">Pincode</div>
                             <div class="col pt-3  pb-3">
-                                <input type="text" class="form-control" name="pincode" id="pincode" value="{{company.pincode}}" style="border: 1px solid skyblue;" required>
+                                <input type="text" class="form-control" name="pincode" id="pincode" value="{{staff.company.pincode}}" style="border: 1px solid skyblue;" required>
                                 
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6 mt-2 mb-3 m-4" id="pcol"  style="background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
-                        <div class="row"  >
+                        <!-- <div class="row"  >
                             <div class="col-md-5 pt-3 pb-3" id="label">Payment Term</div>
                             <div class="col pt-3">
-                                <select name="select" id="select" class="form-control" style="border: 1px solid skyblue;" required>
-                                    <option value="{{company.dateperiod.id}}">{{company.dateperiod.payment_terms_number}} {{company.dateperiod.payment_terms_value}}</option>
+                                <select name="select" id="select" class="form-control" style="border: 1px solid skyblue;">
+                                    <option value="{{staff.company.dateperiod.id}}" selected>{{staff.company.dateperiod.payment_terms_number}} {{staff.company.dateperiod.payment_terms_value}}</option>
 
                                     {% for t in terms %}
                                     <option value="{{t.id}}" data-terms="{{ t.id}}">{{t.payment_terms_number}}
@@ -193,7 +193,7 @@
                                 </select>
                                 
                             </div>
-                        </div>
+                        </div> -->
                         <!-- <div class="row">
                             <div class="col pt-3 pb-3" id="label">End date</div>
                             <div class="col pt-3">
@@ -205,7 +205,7 @@
                             <div class="col pt-3">
                                 <select class="form-control" name="gsttype" id="gsttype"
                                     onselect="hidinput()" style="border: 1px solid skyblue;">
-                                    <option selected value="{{company.gst_type}}">{{company.gst_type}}</option>
+                                    <option selected value="{{company.gst_type}}">{{staff.company.gst_type}}</option>
                                     
                                     <option value="Registered Business - Regular">Registered Business - Regular
                                         <span><i>(Business that is registered under gst)</i></span>
@@ -225,7 +225,7 @@
                         <div class="row" id="gstno">
                             <div class="col-md-5 pt-3 pb-3" id="label">GST No.</div>
                             <div class="col pt-3">
-                                {% if company.gst_no != NULL and company.gst_no != ''  %}
+                                {% if staff.company.gst_no != NULL and staff.company.gst_no != ''  %}
                                 <input type="text" name="gstno"  placeholder="Eg:11AAAAA1111A1ZA"
                                     class="gstno form-control" pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$" value="{{company.gst_no}}" style="border: 1px solid skyblue;">
                                 {% else %}    
@@ -239,7 +239,7 @@
                         <div class="row">
                             <div class="col-md-5 pt-3 pb-3" id="label">Pan No.</div>
                             <div class="col pt-3">
-                                <input type="text" class="form-control" name="panno" id="panno" value="{{company.pan_number}}" style="border: 1px solid skyblue;"  required>
+                                <input type="text" class="form-control" name="panno" id="panno" value="{{staff.company.pan_number}}" style="border: 1px solid skyblue;"  required>
                                 <!-- <h5 class="h5"><b>: {{company.pan_number}}</b></h5> -->
                             </div>
                         </div>
@@ -258,6 +258,15 @@
         </div>
     </div> 
     <script>
+           function validatePhoneNumber() {
+    var phoneNumberVal = $('#ph').val();
+    var regPhoneNumber = /^\d{10}$/; 
+    if (regPhoneNumber.test(phoneNumberVal)) {
+        $('#ph').css('border', '2px solid green'); 
+    } else {
+        $('#ph').css('border', '2px solid red'); 
+    }
+}
         function hidinput(){
             type=document.getElementById("#gsttype").value;
             if (type == "Registered Business - Regular"){

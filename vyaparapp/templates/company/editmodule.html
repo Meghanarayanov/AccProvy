@@ -9,6 +9,9 @@
                 <form action="{% url 'editmodule_action' %}" method="post">
                     {% csrf_token %}
                 <center><h1 class="h1 mb-5 pt-5" style="font-family: 'Times New Roman', Times, serif;"><b>EDIT MODULES</b></h1></center>
+                <input  type="checkbox" class="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="cb"  onchange="checkAll(this)"> 
+                    <b style="color: black;">Select All</b>  
+                    
                 <h3 class="h3 mb-4 mt-4"><b>Sales</b></h3>
                 <div class="row">
                     <div class="col-md-4">
@@ -173,7 +176,15 @@
                         {% endif %}
                         
                     </div>
-                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        {% if allmodules.Upi != Null %}
+                        <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c15" name="c15" value="1" checked>
+                        <b>UPI</b>
+                        {% else %}
+                        <input type="checkbox" style="margin-bottom: 20px;width: 20px;height: 20px;margin-right: 10px;" id="c15" name="c15" value="1">
+                        <b>UPI</b>
+                        {% endif %}
+                    </div>
                     <div class="col-md-4"></div>
                 </div>
                 <center><input type="submit" class="btn btn-danger p-2 mt-5 mb-3" style="width: 30%;font-weight: bold;border-radius: 10px;"></center>
@@ -182,6 +193,26 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function checkAll(ele) {
+     var checkboxes = document.getElementsByTagName('input');
+     if (ele.checked) {
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].type == 'checkbox') {
+                checkboxes[i].checked = true;
+            }
+        }
+    } else {
+        for (var i = 0; i < checkboxes.length; i++) {
+            console.log(i)
+            if (checkboxes[i].type == 'checkbox') {
+                 checkboxes[i].checked = false;
+            }
+        }
+    }
+}
+    </script>
 </body>            
 
 {% endblock %}

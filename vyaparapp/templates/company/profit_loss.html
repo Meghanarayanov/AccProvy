@@ -1,0 +1,736 @@
+{% extends 'company/src/html/base.html' %}
+{% load static %}
+{% block content %}
+{% load social_share %}
+{% load my_extras %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<link rel="stylesheet" href="{% static 'css/expense_report.css' %}">
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<style>
+    .bs {
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+    .bs_sm {
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+    .table th, .table td {
+        width: 14.67%;
+    }
+    #myDropdown {
+        display: none;
+    }
+    #myDropdown.show {
+        display: block;
+    }
+    #myDropdown {
+        display: none;
+        position: absolute;
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+        background-color: #f9f9f9;
+        min-width: 160px;
+        margin-top: 5%;
+        z-index: 1;
+        right: 0px;
+    }
+    #myDropdown a {
+        display: block;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #333;
+    }
+    #myDropdown a:hover {
+        background-color: #ddd;
+    }
+    ::-webkit-scrollbar {
+        display: none;
+    }
+    .party-invoice-details {
+        display: none;
+        margin-top: 10px;
+       
+        
+    }
+    .heading-with-dropdown {
+        display: flex;
+        align-items: center;
+    }
+    .heading-with-dropdown span {
+        margin-right: 10px; /* Adjust as needed */
+    }
+    .custom-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .dropdown-toggle {
+        padding: 10px;
+        background-color: #fcfeff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+    }
+    .dropdown-content {
+        z-index: 1;
+        display: none;
+        position: absolute;
+        top: 40px;
+        left: -95px;
+        background-color: #b4b4b450;
+        backdrop-filter: blur(5px);
+        padding: 10px;
+        border: 1px solid #3498db;
+        border-radius: 5px;
+        box-shadow: 3px 5px 5px 5px rgba(0, 0, 0, 0.201);
+    }
+    .dropdown-content input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        background-color: white;
+        border-radius: 5px;
+        border: 1px solid rgb(168, 168, 168);
+    }
+    .dropdown-content button {
+        padding: 8px 15px;
+        background-color: rgb(0, 154, 108);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 3px;
+    }
+    .custom-dropdown .dropdown-content .cls {
+        position: absolute;
+        right: -7px;
+        top: -7px;
+        padding: 3px 5px;
+        color: white;
+        text-shadow: 0px 0px 2px black ;
+        border-radius: 50%;
+        font-size: 15px;
+        background-color: rgba(255, 0, 0, 0.424);
+    }
+    .custom-dropdown .dropdown-content .title {
+        background-color: rgb(255, 255, 255);
+        font-weight: 500;
+        color: rgb(0, 0, 0);
+        text-shadow: 0px 0px 20px rgb(255, 255, 255);
+        padding: 5px;
+        border-radius: 5px;
+    }
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted #ccc; 
+        cursor: help;
+    }
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -100px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+    .party-invoice-details {
+            display: none;
+        }
+        .item-details {
+    display: flex;
+    justify-content: space-between;
+    padding-right: 20px; 
+    position: relative; 
+}
+.nett-loss-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.nett-loss {
+    margin-left: auto;
+}
+
+
+.item-value {
+    position: absolute;
+    right: 80px; 
+}
+    .amount{
+        margin-left: 420px;
+
+    }
+   
+    .total-amount {
+        float: right;
+        color: black;
+    }
+    .filter-option {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 1px;
+    }
+    #billtable tbody {
+        cursor: pointer;
+    }
+    .no-transactions-message {
+        text-align: center;
+        color: red;
+        font-size: 1.2em;
+        margin-top: 20px;
+    }
+    .d-flex {
+        display: flex;
+    }
+    .justify-content-end {
+        justify-content: flex-end;
+    }
+    .justify-content-between {
+        justify-content: space-between;
+    }
+</style>
+
+<div class="body-wrapper">
+    <br><br><br>
+    <div class="row m-0 pt-5">
+        <div class="col-12">
+            <div class="card p-0 bg-light bs"><br>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h2 style="color:red;">{{ staff.company.company_name }}</h2>
+                            <h4>Profit And Loss</h4>
+                            <h5>
+                                {% if from_date %}{{ from_date }} to{% endif %}
+                                {% if to_date %} <span>{{ to_date }}</span>{% endif %}
+                            </h5>
+                            
+                            
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group mt-1">
+                                <label for="fromDate" style="color: black; margin-bottom: 1vh;">From Date:</label>
+                                <input type="date" class="form-control h-100 border-secondary" id="fromDate" style="color: black; background-color: white;" value="{{ from_date }}">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group mt-1">
+                                <label for="toDate" style="color: black; margin-bottom: 1vh;">To Date:</label>
+                                <input type="date" class="form-control h-100 border-secondary" id="toDate" style="color: black; background-color: white;" value="{{ to_date }}">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="d-flex justify-content-end">
+                                <button class="btn mt-3" type="button" onclick="ExportToExcel()">
+                                    <span><img width="25px" src="{% static 'assets/excel2.png' %}" alt="no img" style="margin-bottom: 3px;"></span>
+                                    <br><span style="color: black; font-size: small; font-weight: bold;">EXCEL</span>
+                                </button>
+                                <button class="btn mt-3" type="button" onclick="printfunction()">
+                                    <span><img width="30px" src="{% static 'images/printer.jpeg' %}" alt="no img"></span>
+                                    <br><span style="color: black; font-size: small; font-weight: bold;">PRINT</span>
+                                </button>
+                                <button class="btn mt-3" type="button" onclick="exportAsPDF()">
+                                    <span><img width="20px" src="{% static 'images/PDF_icon.png' %}" alt="no img" style="margin-bottom: 5px;"></span>
+                                    <br><span style="color: black; font-size: small; font-weight: bold;">PDF</span>
+                                </button>
+                                <div class="custom-dropdown">
+                                    <button class="btn mt-3 dropdown-toggle" id="myDropdownbtn" type="button">
+                                        <span>
+                                            <img width="30px" src="{% static 'images/shareimg.png' %}" alt="no img"><br>
+                                            <span style="color: black; font-size: small; font-weight: bold;">SHARE</span>
+                                        </span>
+                                    </button>
+                                    <div class="dropdown-content" id="myDropdown" style="z-index: 10;">
+                                        <ul style="margin-bottom: -1px;">
+                                            <button class="btn text-black" style="cursor: pointer;">
+                                                {% post_to_whatsapp objects_or_url "WhatsApp" %}
+                                            </button>
+                                        </ul>
+                                        <ul style="margin-bottom: -1px;">
+                                            <a class="btn" style="cursor: pointer; color: black; text-align: left;" data-toggle="modal" data-target="#shareStockToEmail">
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Email
+                                            </a>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            </div>
+        </div>
+    </div>
+
+    <div class="row pt-0 m-0">
+        <div class="col-12">
+            <div class="card p-2 bg-light bs" style="height: 68rem;">
+                <div class="row m-0 p-0 pt-3">
+                    <div class="col-sm-12 col-lg-3">
+                        <h4 class="tb fw-bolder pt-2 text-secondary">Profit And Loss</h4>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <a role="button" class="btn btn-secondary" href="{% url 'profit_loss_vertical' %}">Show Vertical Profit & loss</a>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mt-3"  id="tablediv">
+                            <table id="myTable" class="table table-bordered table-info table-hover tb w-100 table-striped">
+                                <thead>
+                                    
+                                    
+        
+                                    <th class="fs-2 bg-secondary text-white">
+                                        <h4><span>Particulars</span><span style="margin-left: 360px; color: red;">{{ staff.company.company_name }}</span></h4>
+                                        <h6 style="margin-left: 350px;"><span>{% if from_date %}{{ from_date }} to{% endif %}
+                                            {% if to_date %} <span>{{ to_date }}</span>{% endif %}</span></h6>
+                                        
+        
+                                       
+                                           
+                                    </th>
+        
+        
+                                    <th class="fs-2 bg-secondary text-white">
+                                        <h4><span>Particulars</span><span style="margin-left: 330px; color: red;">{{ staff.company.company_name }}</span></h4>
+                                        <h6 style="margin-left: 340px;"><span>{% if from_date %}{{ from_date }} to{% endif %}
+                                            {% if to_date %} <span>{{ to_date }}</span>{% endif %}</span></h6>
+        
+                                        
+                                    </th>
+        
+                                    
+                                    
+                                </thead>
+        
+                                <tbody>
+                                    <tr>
+                                        <td >
+                                            <h5><a style="color: black;" href="#!" onclick="toggleDetails('opening_stock')">Opening Stock <span class="total-amount">{{ total_item_amount }}</span></a></h5>
+                                            <div id="opening_stock" class="party-invoice-details" style="display: none;">
+                                                {% for item in item_queryset %}
+                                                    <div class="item-details"><span>{{ item.item_name }}</span><span class="item-value">{{ item.item_sale_price }}</span></div>
+                                                    
+                                                {% endfor %}
+                                                <div class="item-details"><span></span><span class="item-value">______</span></div>
+                                            </div>
+                                        </td>
+                                        <td >
+                                            <h5><a style="color: black;" href="#!" onclick="toggleDetails('sales_accounts')">Sales Account<span class="total-amount">{{ total_sale }}</span></a></h5>
+                                            <div id="sales_accounts" class="party-sales-details" style="display: none;">
+                                                <div class="item-details"><span>Sales</span><span class="item-value">{{total_sale}}</span></div>
+                                                <div class="item-details"><span></span><span class="item-value">______</span></div>
+                                            </div>
+        
+                                            
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <h5><a style="color: black;" href="#!" onclick="toggleDetails('purchase_accounts')">Purchase Accounts<span class="total-amount">{{ total_purchase }}</span></a></h5>
+                                            <div id="purchase_accounts" class="party-Purchase-details" style="display: none;">
+                                                <div class="item-details"><span>Purchase</span><span class="item-value">{{total_purchase}}</span></div>
+                                                <div class="item-details"><span></span><span class="item-value">______</span></div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <h5><a style="color: black;" href="#!" onclick="toggleDetails('indirect_incomes')">Indirect Incomes<span class="total-amount">{{ total_discount_pbill }}</span></a></h5>
+                                            <div id="indirect_incomes" class="party-Income-details" style="display: none;">
+                                                
+                                                <div class="item-details"><span>Discount Received</span><span class="item-value">{{total_discount_pbill}}</span></div>
+                                                <div class="item-details"><span></span><span class="item-value">______</span></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <h5><a style="color: black;" href="#!" onclick="toggleDetails('indirect_expenses')">Indirect Expenses<span class="total-amount">{{ ind_exp }}</span></a></h5>
+                                            <div id="indirect_expenses" class="party-Purchase-details" style="display: none;">
+                                                {% for e in exp %}
+                                                    <div class="item-details"><span>{{ e.expense_category_id.expense_category }}</span><span class="item-value">{{ e.Sub_total }}</span></div>
+                                                {% endfor %}
+                                                <div class="item-details"><span>Discount Paid</span><span class="item-value">{{discount_paid}}</span></div>
+                                                <div class="item-details"><span></span><span class="item-value">______</span></div>
+                                                
+                                            </div>
+        
+                                        </td>
+        
+        
+                                        <td>
+                                            <h5><a style="color: black;" href="#!" onclick="toggleDetails('closing_stock')">Closing Stock <span class="total-amount">{{ total_current_stock }}</span></a></h5>
+                                            <div id="closing_stock" class="party-closing-stock-details" style="display: none;">
+                                                {% for item in item_queryset %}
+                                                    <div class="item-details"><span>{{ item.item_name }}</span><span class="item-value">{{item.item_current_stock}}</span></div>
+                                                    
+                                                {% endfor %}
+                                                <div class="item-details"><span></span><span class="item-value">______</span></div>
+                                            </div>
+                                            
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    {% if nett_profit %}
+                                                        <div class="nett-loss-container">
+                                                            <h5>Nett Profit:</h5>
+                                                            <h5><span class="nett-loss">{{ nett_profit }}</span></h5>
+                                                           
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    {% if nett_loss %}
+                                                        <div class="nett-loss-container">
+                                                            <h5>Nett Loss:</h5>
+                                                            <h5><span class="nett-loss">{{ nett_loss }}</span></h5>
+                                                           
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    
+                                                    <div class="nett-loss-container">
+                                                        <h5>Total:</h5>
+                                                        <h5><span class="nett-loss">{{ total }}</span></h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+        
+                                        </td>
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    
+                                                    <div class="nett-loss-container">
+                                                        <h5>Total:</h5>
+                                                        <h5><span class="nett-loss">{{ total2 }}</span></h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+        
+                                        </td>
+                                    </tr>
+                                    
+                                    
+                                </tbody>
+                                        </table>
+                            <p id="emptyMessage" class="no-transactions-message" style="display: none;">No Transactions to Show</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="shareStockToEmail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Send template via mail</h5>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'profit_loss_mail_h' %}" id="share_to_email_form" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="emailIds">Mail id</label>
+                            <textarea name='emailIds' class="form-control" id="emailIds" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="email_message">Message</label>
+                            <input type="text" name="email_message" class="form-control" id="email_message" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="share_with_email">Share</button>
+                    <button type="button" class="btn btn-secondary" id="close_modal_btn" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleDetails(elementId) {
+        const element = document.getElementById(elementId);
+        const isVisible = element.style.display === 'block';
+        element.style.display = isVisible ? 'none' : 'block';
+    }
+    function showPartyInvoices(partyName) {
+        const element = document.getElementById('party_' + partyName);
+        const isVisible = element.style.display === 'block';
+        document.querySelectorAll('.party-invoice-details').forEach(el => el.style.display = 'none');
+        element.style.display = isVisible ? 'none' : 'block';
+    }
+
+    document.getElementById('fromDate').addEventListener('change', filterDates);
+    document.getElementById('toDate').addEventListener('change', filterDates);
+
+    function filterDates() {
+        var fromDate = document.getElementById("fromDate").value;
+        var toDate = document.getElementById("toDate").value;
+        window.location.href = `?from_date=${fromDate}&to_date=${toDate}`;
+    }
+
+    function printfunction() {
+    var printContents = document.getElementById("tablediv").outerHTML; 
+    var originalContents = document.body.innerHTML;
+
+    // Add CSS styles for right alignment of integer values
+    var customStyle = `
+        <style>
+            .total-amount, .amount {
+                float: right;
+                text-align: right;
+            }
+            
+        </style>
+    `;
+
+    document.body.innerHTML = "<html><head><title>Print</title>" + customStyle + "</head><body>" + printContents + "</body></html>";
+
+    window.print(); // Trigger the print dialog
+
+    // Restore the original content after printing
+    document.body.innerHTML = originalContents;
+
+    // Optionally reload the page to restore JavaScript functionality
+    window.location.reload();
+}
+
+
+
+
+function exportAsPDF() {
+    const table = document.querySelector('#tablediv');
+
+    // Show all details sections
+    var detailsSections = table.querySelectorAll(".party-i-details, .party-P-details, .party-e-details, .party-s-details, .party-I-details, .party-c-stock-details");
+    detailsSections.forEach(function(section) {
+        section.style.display = 'block';
+    });
+
+    // Clone the table
+    var clonedTable = table.cloneNode(true);
+
+    // Remove unwanted elements
+    var elementsToRemove = clonedTable.querySelectorAll(".dropdown-content-div");
+    elementsToRemove.forEach(function(element) {
+        element.parentNode.removeChild(element);
+    });
+
+    // Create a container for the PDF content
+    var container = document.createElement('div');
+    var heading = document.createElement('h1');
+    heading.innerText = 'Profit and Loss';
+    var datefield = document.createElement('h5');
+
+    // Add date information
+    var fromDate = document.getElementById("fromDate").value;
+    var toDate = document.getElementById("toDate").value;
+    if (fromDate && toDate) {
+        datefield.innerHTML = `From: ${fromDate} &nbsp;&nbsp;&nbsp; To: ${toDate}`;
+    } else if (fromDate && !toDate) {
+        datefield.innerText = `From: ${fromDate}`;
+    }
+
+    container.appendChild(heading);
+    container.appendChild(datefield);
+    container.appendChild(clonedTable);
+
+    
+    clonedTable.style.transform = 'scale(0.75)';
+    clonedTable.style.transformOrigin = 'top left';
+    clonedTable.style.width = '75%'; 
+
+    
+    var opt = {
+        margin: [0.5, 0.2, 0.2, 0.5], 
+        filename: 'Profit and Loss.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'cm', format: 'letter', orientation: 'landscape' } 
+    };
+
+    // Generate PDF
+    html2pdf().set(opt).from(container).save();
+
+    // Restore the original display state of the details sections
+    detailsSections.forEach(function(section) {
+        section.style.display = 'none';
+    });
+}
+function ExportToExcel() {
+    var table = document.getElementById("myTable");
+    var workbook = XLSX.utils.table_to_book(table, { sheet: "Sheet 1" });    
+    var fromDate = document.getElementById("fromDate").value;
+    var toDate = document.getElementById("toDate").value;
+    var filename = `Profit_And_Loss_${fromDate}_to_${toDate}.xlsx`;
+
+    // Set the column width for the first column (index 0)
+    workbook.Sheets["Sheet 1"]["!cols"] = [{ wpx: 150 }, { wpx: 150 }];
+
+    XLSX.writeFile(workbook, filename);
+}
+
+
+
+
+    function toggleDropdownShare() {
+        var dropdownContent = document.getElementById("myDropdown");
+        dropdownContent.classList.toggle("show");
+    }
+
+    document.addEventListener('click', function(event) {
+        var dropdown = document.querySelector('#myDropdown');
+        var dropdownbtn = document.querySelector('#myDropdownbtn');
+        if (dropdownbtn.contains(event.target)) {
+            toggleDropdownShare()
+        }
+        if (!dropdown.contains(event.target) && !dropdownbtn.contains(event.target)) {
+            $(dropdown).removeClass('show');
+        }
+    });
+
+    function toggleDropdown1() {
+        var dropdownContent = document.querySelector('.dd1');
+        dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function handleButtonClick1() {
+        var inputValue = $('#dd1_input').val().toLowerCase();
+        $('#billtable tbody tr').each(function(){
+            if($(this).find('td').first().text().toLowerCase().indexOf(inputValue) > -1)
+            {
+                $(this).show();
+            }
+            else{
+                $(this).hide();
+            }
+        });
+        toggleDropdown1();
+    }
+
+    function clear_input1() {
+        $('#dd1_input').val('');
+    }
+
+    function toggleDropdown2() {
+        var dropdownContent = document.querySelector('.dd2');
+        dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function handleButtonClick2() {
+        var inputValue = $('#dd2_input').val().toLowerCase();
+        $('#billtable tbody tr').each(function(){
+            if($(this).find('td').eq(1).text().toLowerCase().indexOf(inputValue) > -1)
+            {
+                $(this).show();
+            }
+            else{
+                $(this).hide();
+            }
+        });
+        toggleDropdown2();
+    }
+
+    function clear_input2() {
+        $('#dd2_input').val('');
+    }
+
+    function toggleDropdown3() {
+        var dropdownContent = document.querySelector('.dd3');
+        dropdownContent.style.display = dropdownContent.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function handleButtonClick3() {
+        var inputValue = $('#dd3_input').val().toLowerCase();
+        $('#billtable tbody tr').each(function(){
+            if($(this).find('td').eq(2).text().toLowerCase().indexOf(inputValue) > -1)
+            {
+                $(this).show();
+            }
+            else{
+                $(this).hide();
+            }
+        });
+        toggleDropdown3();
+    }
+
+    $('#fromDate').on('change', function () {
+    var startDate = new Date(document.getElementById("fromDate").value);
+    document.getElementById("s1date").innerHTML =String(startDate.toLocaleDateString()) + ' TO ';
+    fromDate = $(this).val();
+    $('#toDate').prop('min', fromDate);
+    filterByDate();
+});
+$('#toDate').on('change', function () {
+    var endDate = new Date($('#toDate').val());
+    document.getElementById("e1date").innerHTML = endDate.toLocaleDateString();
+    toDate = $(this).val();
+    $('#fromDate').prop('max', toDate);
+    filterByDate();
+
+});    
+    function clear_input3() {
+        $('#dd3_input').val('');
+    }
+    
+    $('#share_with_email').click(function(event) {
+        event.preventDefault();
+        $.ajax({
+            url: "{% url 'profit_loss_mail_h' %}",
+            type: 'GET',
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            data: {
+                from_date: $('#fromDate').val(),
+                to_date: $('#toDate').val(),
+                search_input: $('#search_input').val(),
+                email_ids: $('#emailIds').val(),
+                email_message: $('#email_message').val(),
+            },
+            success: function(response) {
+                $('#share_to_email_form')[0].reset();
+                document.getElementById("close_modal_btn").click();
+                alert(response.message);
+            },
+        });
+    });
+</script>
+
+{% endblock %}
+
