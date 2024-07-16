@@ -21763,47 +21763,26 @@ def balancesheet_mail_vertical(request):
         return JsonResponse({'message': message})
 def allparties(request):
     sid = request.session.get('staff_id')
-    staff =  staff_details.objects.get(id=sid) 
+    staff = staff_details.objects.get(id=sid)
     cmp = company.objects.get(id=staff.company.id)
-    allmodules= modules_list.objects.get(company=cmp,status='New')
-    firstParty = party.objects.filter(company=cmp).first()
+    allmodules = modules_list.objects.get(company=cmp, status='New')
 
-    bill = PurchaseBill.objects.filter(company=cmp)
-    purchaseorder = PurchaseOrder.objects.filter(company=cmp)
-    debitnote  = purchasedebit.objects.filter(company=cmp)
-    invoice = SalesInvoice.objects.filter(company=cmp)
-    estimate = Estimate.objects.filter(company=cmp)
-    saleorder = salesorder.objects.filter(comp=cmp)
-    deliverychallan = DeliveryChallan.objects.filter(company=cmp)
-    creditnote = CreditNote.objects.filter(company=cmp)
-    expense = Expense.objects.filter(staff_id__company=cmp)
-    paymentin = PaymentIn.objects.filter(company=cmp)
-    paymentout = PaymentOutDetails.objects.filter(paymentout__company=cmp)
-    partyy = party.objects.filter(company=cmp)
+    parties = party.objects.filter(company=cmp)
     
-      
-       
-    context={
-      'allmodules':allmodules,
-      'companyName':cmp.company_name,
-      'bill':bill,
-      'invoice':invoice,
-      'saleorder':saleorder,
-      'deliverychallan':deliverychallan,
-      'creditnote':creditnote,
-      'debitnote' :debitnote ,
-      'purchaseorder':purchaseorder,
-      'estimate':estimate,
-      'expense':expense,
-      'paymentin':paymentin,
-      'paymentout':paymentout,
-      'party':partyy,
-      'firstParty':firstParty.party_name,
-       
+    party_data = []
+    for p in parties:
+        receivable_balance = SalesInvoice.objects.filter(party=p).aggregate(total=Sum('totalbalance'))['total'] or 0
+        payable_balance = PurchaseBill.objects.filter(party=p).aggregate(total=Sum('balance'))['total'] or 0
+        party_data.append({
+            'party': p,
+            'receivable_balance': receivable_balance,
+            'payable_balance': payable_balance,
+        })
+
+    context = {
+        'allmodules': allmodules,
+        'companyName': cmp.company_name,
+        'party_data': party_data,
+        'parties':parties
     }
-    return render(request,'company/allparties.html',context)
-  #sid = request.session.get('staff_id')
-  #staff =  staff_details.objects.get(id=sid)
-  #cid= staff.company.id
-  #parties=party.objects.filter(company_id=cid)
-  #return render(request,'company/allparties.html',{'staff':staff,'parties':parties})
+    return render(request, 'company/allparties.html', context)
