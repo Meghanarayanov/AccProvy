@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+
+
+
+
+
+    
+
+            <div class="container" >
+                
+                <div class="row">
+                    <center>
+                        <h1>{{companyName}}</h1>
+                        <h2>All Transaction Details </h2>
+                        <h4 {% if start_date == None or end_date == None  %} style="display: none;" {% endif %}>{{start_date}} to {{end_date}}</h4>
+                    
+                    </center>
+                </div>   
+                <div class="container-fluid table-responsive-md" id="tableDiv" >
+                    <table class="table mt-4" id="tableStock" style="border: 1px solid gray; margin-top: 10px;padding: 3px;">
+                        <thead >
+                            <tr class="text-center mt-5" >
+                              
+                                    <th> # </th>
+                                    <th> PARTY NAME </th>
+                                    <th> EMAIL  </th>
+                                    <th>PHONE NUMBER</th>
+                                    <th> RECEIVABLE BALANCE   </th>
+                                    <th> PAYABLE BALANCE  </th>
+                                   
+                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in party_data %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ p.party.party_name }}</td>
+                                <td>{{ p.party.email|default:"--" }}</td>
+                                <td>{{ p.party.contact|default:"--" }}</td>
+                                <td>{{ p.receivable_balance }}</td>
+                                <td>{{ p.payable_balance }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table><br>
+                    <div style="display: flex;justify-content: space-between;">
+                        <h5 for="">Total Receivable :<b id="totalreceivable"  class="ml-2">{{totalreceivable}}</b></h5>
+                        <h5 for="">Total Payable : <b id="totalpayable" class="ml-2">{{totalpayable}}</b></h5>
+                    </div>
+                </div>
+            </div>
+                      
+                
+    
+      
+
+
+</body>
+</html>

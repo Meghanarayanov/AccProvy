@@ -21786,3 +21786,110 @@ def allparties(request):
         'parties':parties
     }
     return render(request, 'company/allparties.html', context)
+def all_party_date_filter(request):
+    fromDate = request.GET.get('fromdate')
+    toDate = request.GET.get('todate')
+
+    try:
+        start_date = datetime.strptime(fromDate, '%Y-%m-%d').date()
+        end_date = datetime.strptime(toDate, '%Y-%m-%d').date()
+    except (ValueError, TypeError):
+        return JsonResponse({'error': 'Invalid date format'})
+
+    sid = request.session.get('staff_id')
+    staff = staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id)
+    parties = party.objects.filter(company=cmp)
+    
+    party_data = []
+    for p in parties:
+        receivable_balance = SalesInvoice.objects.filter(party=p, date__gte=start_date, date__lte=end_date).aggregate(total=Sum('totalbalance'))['total'] or 0
+        payable_balance = PurchaseBill.objects.filter(party=p, billdate__gte=start_date, billdate__lte=end_date).aggregate(total=Sum('balance'))['total'] or 0
+        party_data.append({
+            'party': p.party_name,
+            'email': p.email,
+            'contact': p.contact,
+            'receivable_balance': receivable_balance,
+            'payable_balance': payable_balance,
+        })
+
+    context = {
+        'party_data': party_data,
+    }
+    return JsonResponse(context)
+
+
+def sendEmail_all_parties(request):
+    sid = request.session.get('staff_id')
+    staff = staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id)
+    
+    parties = party.objects.filter(company=cmp)
+
+    if request.method == 'POST':
+        try:
+            emails_string = request.POST['email_ids']
+            emails_list = [email.strip() for email in emails_string.split(',')]
+            email_message = request.POST['email_message']
+            
+            s_date = request.POST.get('start_date')
+            e_date = request.POST.get('end_date')
+            totalpayable = request.POST.get('totalpayable2')
+            totalreceivable = request.POST.get('totalreceivable2')
+            
+            start_date = None
+            end_date = None
+            
+            if s_date and e_date:
+                try:
+                    start_date = datetime.strptime(s_date, '%Y-%m-%d').date()
+                    end_date = datetime.strptime(e_date, '%Y-%m-%d').date()
+                except (ValueError, TypeError):
+                    return JsonResponse({'error': 'Invalid date format'})
+
+            party_data = []
+            for p in parties:
+                if start_date and end_date:
+                    receivable_balance = SalesInvoice.objects.filter(party=p, date__gte=start_date, date__lte=end_date).aggregate(total=Sum('totalbalance'))['total'] or 0
+                    payable_balance = PurchaseBill.objects.filter(party=p, billdate__gte=start_date, billdate__lte=end_date).aggregate(total=Sum('balance'))['total'] or 0
+                else:
+                    receivable_balance = SalesInvoice.objects.filter(party=p).aggregate(total=Sum('totalbalance'))['total'] or 0
+                    payable_balance = PurchaseBill.objects.filter(party=p).aggregate(total=Sum('balance'))['total'] or 0
+                
+                party_data.append({
+                    'party': p,
+                    'receivable_balance': receivable_balance,
+                    'payable_balance': payable_balance,
+                })
+
+            context = {
+                'party_data': party_data,
+                'cmp': cmp,
+                'companyName': cmp.company_name,
+                'start_date': start_date,
+                'end_date': end_date,
+                'totalpayable': totalpayable,
+                'totalreceivable': totalreceivable
+            }
+            
+            template_path = 'company/all_parties_pdf.html'
+            template = get_template(template_path)
+            html = template.render(context)
+            result = BytesIO()
+            pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+            pdf = result.getvalue()
+            filename = f'All_Party_Details.pdf'
+            subject = "All Party Details"
+            from django.core.mail import EmailMessage as EmailMsg
+            email = EmailMsg(subject, f"Hi,\nPlease find the attached All Party Details for\n{email_message}\n\n--\nRegards,\n{cmp.company_name}\n{cmp.address}\n{cmp.state} - {cmp.country}\n{cmp.contact}", from_email=settings.EMAIL_HOST_USER, to=emails_list)
+            email.attach(filename, pdf, "application/pdf")
+            email.send(fail_silently=False)
+
+            messages.success(request, 'All Party Details have been shared via email successfully!')
+            return redirect('allparties')
+        
+        except Exception as e:
+            messages.error(request, f'Error: {e}')
+            return redirect('allparties')
+
+    return redirect('allparties')

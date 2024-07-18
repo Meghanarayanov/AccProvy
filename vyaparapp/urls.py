@@ -433,7 +433,7 @@ urlpatterns = [
     path('purchasefilterbyDate',views.purchasefilterbyDate,name='purchasefilterbyDate'),
     path('purchasefilter',views.purchasefilter,name='purchasefilter'),
     
-    path('allparties',views.allparties,name='allparties'),
+   
     path('sale_purchaseby_party',views.sale_purchaseby_party,name='sale_purchaseby_party'),
     path('sale_order_item',views.sale_order_item,name='sale_order_item'),
     path('sale_purchaseby_party_filter',views.sale_purchaseby_party_filter,name='sale_purchaseby_party_filter'),
@@ -645,7 +645,12 @@ urlpatterns = [
     path('vertical_balancesheet',views.vertical_balancesheet,name='vertical_balancesheet'),
     path('balancesheet_mail_horizontal',views.balancesheet_mail_horizontal,name='balancesheet_mail_horizontal'),
     path('balancesheet_mail_vertical',views.balancesheet_mail_vertical,name='balancesheet_mail_vertical'),
+   
+    path('allparties',views.allparties,name='allparties'),
+    path('all_party_date_filter',views.all_party_date_filter,name="all_party_date_filter"),
+    path('sendEmail_all_parties',views.sendEmail_all_parties,name="sendEmail_all_parties"),
     #End
+    
     
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     

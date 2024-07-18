@@ -763,3 +763,851 @@ function exportAsExcel() {
 </script>
 
 {% endblock %}
+
+
+
+
+
+
+
+{% extends 'company/src/html/base.html' %}
+{% load static %}
+{% block content %}
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+{% load my_extras %}
+
+<style>
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+
+    .bs_sm{
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+
+    .paiddiv{
+        color: black;
+        height: 10vh;
+        width: 20vh;
+        padding-left: 2vh;
+        padding-top: 1vh;
+        padding-bottom: 1vh;
+        margin-left: 7vh;
+        border-radius: 8px;
+        background-color: lightgray;
+    }
+
+    .unpaiddiv{
+        color: black;
+        height: 10vh;
+        width: 20vh;
+        padding-left: 2vh;
+        padding-top: 1vh;
+        padding-bottom: 1vh;
+        margin-left: 7vh;
+        border-radius: 8px;
+        background-color: lightsteelblue;
+    }
+
+    .totaldiv{
+        color: black;
+        height: 10vh;
+        width: 20vh;
+        padding-left: 2vh;
+        padding-top: 1vh;
+        padding-bottom: 1vh;
+        margin-left: 7vh;
+        border-radius: 8px;
+        background-color: lightgreen;
+    }
+
+    #billtable tbody{
+        cursor: pointer;
+    }
+
+    #emptyMessage {
+        display: none;
+        font-size: x-large;
+        font-weight: bold;
+        color: red;
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+        padding: 10px;
+        z-index: 1;
+        width: 15%;
+    }
+
+    .dropdown-content label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .dropdown-content input {
+        width: 100%;
+        padding: 5px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+    }
+
+    .tplus{
+        margin-top: 3vh;
+        margin-left: 5vh;
+        margin-right: -2vh;
+    }
+
+    .tequal{
+        margin-top: 3vh;
+        margin-left: 5vh;
+        margin-right: -2vh;
+    }
+
+    .tg{
+        color: rgb(0, 140, 7);
+    }
+
+    .tr{
+        color: rgb(218, 0, 0);
+    }
+
+    .tj{
+        color:#E4A11B;
+    }
+
+    .th{
+        color: rgb(12, 79, 234);
+    }
+
+    @media print{
+        body{
+            visibility: hidden !important; /* hide everything in body when in print mode*/
+        }
+
+        .printContainer {
+            visibility: visible !important; /* Override the rule above to only show the printables*/
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+        } 
+
+        #calcdiv{
+            visibility: visible;
+            margin-top: -30vh;
+            margin-left: -9vh;
+            margin-bottom: 30vh;
+        }
+
+        /* #billtable{
+            margin-top: 20vh;
+            margin-bottom: 20vh;
+        } */
+
+        #billtable th{
+            font-size: medium;
+        }
+
+        .extra{
+            display: none;
+        }
+    }
+    
+    ::-webkit-scrollbar{
+        display: none
+    }
+
+    #myDropdown {
+        display: none;
+    }
+    #myDropdown.show {
+        display: block;
+    }
+    #myDropdown {
+        display: none;
+        position: absolute;
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+        background-color: #f9f9f9;
+        min-width: 160px;
+        margin-top: 50px;
+        /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); */
+        z-index: 1;
+        right: 0px;
+    }
+
+    #myDropdown  a {
+        display: block;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #333;
+    }
+
+    #myDropdown  a:hover {
+        background-color: #ddd;
+    }
+    @media(max-width:768px){
+        #myDropdown{
+            position: absolute;
+            top: 300px;
+        }
+    }
+    @media(min-width:768px){
+        #myDropdown{
+            position: absolute;
+            top: 200px;
+        }
+    }
+</style>
+
+
+<div class="body-wrapper">
+    <br><br><br>
+    <center>
+        {% for m in messages %}
+        <div id="message">
+            <br><br>
+            <h4>{{m}}</h4>
+        </div>
+        {% endfor %}
+    </center>
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get the message element
+            var message = document.getElementById("message");
+
+            // Function to hide the message after 3 seconds
+            function hideMessage() {
+                message.style.display = "none";
+            }
+
+            // Show the message
+            message.style.display = "block";
+
+            // Schedule hiding the message after 3 seconds
+            setTimeout(hideMessage, 3000); // 3000 milliseconds = 3 seconds
+        });
+    </script>
+    <div class="d-flex justify-content-center pt-4">
+        <!-- <a href="{% url 'add_salesinvoice' %}" id="b1" class="btn  text-white"
+            style="margin-right: 10px; background-color: rgb(252, 3, 3,0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            Add Sale <i class="fa fa-plus"></i>
+        </a>
+        <a href="{% url 'add_purchasebill' %}" id="b2" class="btn  text-white"
+            style="margin-right: 10px;background-color: rgba(3, 161, 252, 0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            Add Purchase <i class="fa fa-plus"></i>
+        </a>
+        <a href="" id="b3" class="btn text-primary"
+            style="border-radius: 20px;border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+            Add More <i class="fa fa-plus"></i>
+        </a> -->
+    </div>
+    <p></p>
+    <div class="row ps-3 pe-3 m-0" >
+        <div class="col-sm-12 ps-2 pe-3">
+            <div class="row pt-0 m-0">
+                <div class="card p-0 bg-light bs"><br>
+                    <div class="row ">
+                        <div class="">
+                            <center>
+                                <div>
+                                    <h2 style="font-weight: 600;color: red;">{{companyName}}</h2>
+                                    <h3>All Parties</h3>
+                                    <b id="datefilter"></b>
+                                </div><br>
+                            </center>
+                            <div class="row mx-3">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="fromDate" style="color: black; margin-bottom: 1vh;">From Date:</label>
+                                            <input type="date" class="form-control h-100 border-secondary p-2" id="fromDate" style="color: black; background-color: white;" onchange="all_party_filter_by_date()"> 
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="toDate" style="color: black; margin-bottom: 1vh;">To Date:</label>
+                                            <input type="date" class="form-control h-100 border-secondary " id="toDate" style="color: black; background-color: white;" onchange="all_party_filter_by_date()">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="toDate" style="color: black; margin-bottom: 1vh;">Party:</label>
+                                            <select name="" id="FilterType" onchange="filterTablebyType()" class="form-control border-secondary" style="color: black; margin-bottom: 1vh; background-color: white;">
+                                                <option value="All Parties">All Parties</option>
+                                                {% for p in parties %}
+                                                    
+                                                    <option value="{{p.party_name}}">{{p.party_name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                
+                                <div class="col-md-1"></div>
+                                <div class="col-md-4 text-right" style="margin-left: 6vw;display: flex;justify-content: end;">
+
+                                    <button class="btn mt-3" type="button" onclick="ExportToExcel()" style="margin-right: 2vh; margin-left: 5vh;">
+                                        <span><img width="22px" src="{% static 'assets/excel2.png' %}" alt="no img"></span>
+                                        <br><span style="color: black; font-size: 10px; font-weight: bold;">EXCEL</span>
+                                    </button>
+
+                                    <button class="btn mt-3" type="button" onclick="printfunction()" style="margin-right: 2vh;">
+                                        <span><img width="26px" src="{% static 'images/printer.jpeg' %}" alt="no img"></span>
+                                        <br><span style="color: black; font-size: 10px; font-weight: bold;">PRINT</span>
+                                    </button>
+
+                                    <button class="btn mt-3" type="button" onclick="generatePDF()" style="margin-right: 2vh;">
+                                        <!-- generatePDF() -->
+                                        <span >
+                                            <img width="20px" src="{% static 'images/pdfdownload.png' %}" alt="no img"><br><span style="color: black; font-size: 10px; font-weight: bold;"><strong>PDF</strong></span></em>
+                                        </span>
+                                    </button>
+
+                                    <button class="btn mt-3" type="button" onclick="toggleDropdownShare()" >
+                                        <span>
+                                            <img width="25px" src="{% static 'images/shareimg.png' %}" alt="no img"><br>
+                                            <span style="color: black; font-size: 10px; font-weight: bold;">SHARE</span>
+                                        </span>
+                                    </button>
+                                    <div class="dropdown-content" id="myDropdown" style="z-index: 10;">
+                                        <ul style="margin-bottom: -1px;"><a style="cursor: pointer;" onclick="sendWhatsApp()">WhatsApp</a></ul>
+                                        <ul style="margin-bottom: -1px;"><a style="cursor: pointer;" data-toggle="modal" data-target="#shareStockToEmail">Email</a></ul>
+                                    </div>
+                                    
+                                    <!-- <button class="btn mt-3" type="button" data-toggle="modal" data-target="#excelModal" onclick="excelmodel()">
+                                        <span><img width="30px" src="{% static 'images/import.png' %}" alt="no img"></span>
+                                        <br><span style="color: black; font-size: small; font-weight: bold;">Import</span>
+                                    </button> -->
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div><br>
+                    
+                    
+                    <br>
+                </div>
+            </div>
+
+            <div class="row pt-0 m-0" >
+                <div class="card p-0 bg-light bs" >
+                    <div class="row p-0 pt-3" style="margin-left: 14px;">
+                        <h4 class="tb fw-bolder pt-2 text-secondary mx-1" style="margin-left: 24px;"> <b style="text-transform: uppercase;"></b>ALL PARTY DETAILS</h4>
+                    </div>
+
+                    <div class="row mx-1">
+                        <div class="col-md-4">
+                            <!-- <input id="search_input" style="padding-inline-start: 2rem; margin-left: 1vw; " class="w-100 border-secondary text-dark pt-1 pb-1 pe-1 rounded" type="text" placeholder=" Search"> -->
+                        </div>
+                        <div class="col-md-6"></div>
+                        
+                    </div>
+
+                    <div class="row mx-1">
+                        <div class="col-md-12" style="margin-left: 2vh;">
+                            <div class="mt-3 table-responsive " style="width: 97%;" id="tablediv">
+                                <table class="table table-bordered table-info table-striped tb w-100" id="billtable"  style="text-align: center;">
+                                    <thead >
+                                        <tr class="fs-2 tb">
+                                            <th class="bg-secondary text-white">
+                                                #
+                                                
+                                            </th>
+                                            <th class="bg-secondary text-white">
+                                                PARTY NAME
+                                                <a class="extra text-dark" onclick="toggleDropdown(1)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
+                                                <div class="dropdown-content" id="dropdownContent1">
+                                                    <label for="filterInput1" style="color: black; text-align: left;">Equal To</label>
+                                                    <input type="text" id="filterInput1"  />
+                                                    <a class="btn btn-info" onclick="cleardropdown(1)">Clear</a> 
+                                                    &nbsp;<a class="btn btn-info" onclick="filterTable(1)">Apply</a>
+                                                </div>
+                                            </th>
+                                            <th class="bg-secondary text-white">
+                                                EMAIL
+                                                <a class="extra text-dark" onclick="toggleDropdown(2)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
+                                                <div class="dropdown-content" id="dropdownContent2">
+                                                    <label for="filterInput2" style="color: black; text-align: left;">Equal To</label>
+                                                    <input type="text" id="filterInput2"  />
+                                                    <a class="btn btn-info" onclick="cleardropdown(2)">Clear</a> 
+                                                    &nbsp;<a class="btn btn-info" onclick="filterTable(2)">Apply</a>
+                                                </div>
+                                            </th>
+                                            <th class="bg-secondary text-white">
+                                                PHONE NUMBER
+                                                <a class="extra text-dark" onclick="toggleDropdown(3)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
+                                                <div class="dropdown-content" id="dropdownContent3">
+                                                    <label for="filterInput3" style="color: black; text-align: left;">Equal To</label>
+                                                    <input type="text" id="filterInput3"  />
+                                                    <a class="btn btn-info" onclick="cleardropdown(3)">Clear</a> 
+                                                    &nbsp;<a class="btn btn-info" onclick="filterTable(3)">Apply</a>
+                                                </div>
+                                            </th>
+                                            <th class="bg-secondary text-white">
+                                                RECEIVABLE BALANCE
+                                                <a class="extra text-dark" onclick="toggleDropdown(4)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
+                                                <div class="dropdown-content" id="dropdownContent4">
+                                                    <label for="filterInput4" style="color: black; text-align: left;">Equal To</label>
+                                                    <input type="text" id="filterInput4" />
+                                                    <a class="btn btn-info" onclick="cleardropdown(4)">Clear</a> 
+                                                    &nbsp;<a class="btn btn-info" onclick="filterTable(4)">Apply</a>
+                                                </div>
+                                            </th>
+                                            <th class="bg-secondary text-white">
+                                                PAYABLE BALANCE
+                                                <a class="extra text-dark" onclick="toggleDropdown(5)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
+                                                <div class="dropdown-content" id="dropdownContent5">
+                                                    <label for="filterInput5" style="color: black; text-align: left;">Equal To</label>
+                                                    <input type="text" id="filterInput5" />
+                                                    <a class="btn btn-info" onclick="cleardropdown(5)">Clear</a> 
+                                                    &nbsp;<a class="btn btn-info" onclick="filterTable(5)">Apply</a>
+                                                </div>
+                                            </th>
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for p in party_data %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ p.party.party_name }}</td>
+                                            <td>{{ p.party.email|default:"--" }}</td>
+                                            <td>{{ p.party.contact|default:"--" }}</td>
+                                            <td>{{ p.receivable_balance }}</td>
+                                            <td>{{ p.payable_balance }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                   
+                                </table>
+                                <br>
+                                <div style="display: flex;justify-content: space-between;">
+                                    <h5 for="">Total Payables :<b id="totalPayables" class="ml-2"></b></h5>
+                                    <h5 for="">Total Receivables : <b id="totalReceivables" class="ml-2"></b></h5>
+                                </div><br><br>
+
+                                
+
+                                <p id="emptyMessage" style="text-align: center;">
+                                    <br><br><br>
+                                    No Transactions to Show
+                                </p>
+                                <div id="content" style="display:none;">
+                                    <div id="content1">
+                                        
+                                   
+                                    <h2 style="text-align: center; color:red;">{{staff.company.company_name}}</h2>
+                                    <h4 style="text-align: center;">All Parties</h4>
+                                    <h5 style="text-align: center;">
+                                        <span id="sdate" style="color:black; text-align: center;"></span>
+                                        <span id="edate" style="color:black; text-align: center;"></span>
+                                    </h5>
+            
+                                    <table class="table table-bordered" id="myTable1">
+                                        <thead style="color: blue;">
+                                            <th>#</th>
+                                            <th>Party&nbsp;Name</th>
+                                            <th>Email</th>
+                                            <th>Phone No.</th>
+                                            <th>Receviable&nbsp;Balance</th>
+                                            <th>Payable&nbsp;Balance</th>
+                                            <th>Credit Limit</th>
+                                        </thead>
+                                        <tbody>
+                                            {% for p in party_data %}
+                                        <tr>
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{ p.party.party_name }}</td>
+                                            <td>{{ p.party.email|default:"--" }}</td>
+                                            <td>{{ p.party.contact|default:"--" }}</td>
+                                            <td>{{ p.receivable_balance }}</td>
+                                            <td>{{ p.payable_balance }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                            
+                                        </tbody>
+                                        <tfoot>
+                                            <td colspan="4" style="color: black;">Total&nbsp; Payable:</td>
+                                            <td colspan="3" style="color: black;text-align: right;">Total&nbsp; Receviable:</td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                                </div>
+                            </div>
+
+                            </div>
+
+                        </div>
+                    </div>                        
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+        
+   
+<!-- modal email AccProVy -->
+<div class="modal fade" id="shareStockToEmail" tabindex="-1" aria-labelledby="shareBillEmailLabel" aria-hidden="true" style="color: #000;">
+    <div class="modal-dialog" >
+      <div class="modal-content" style=" background-color:rgb(85, 188, 248);border-radius: 3px;">
+        <div class="modal-header" style="border-bottom: 1px solid #ffffff;">
+          <h5 class="modal-title text-dark" id="shareBillEmailLabel">Share Invoice Via Email</h5>
+          <button type="button" class="btn-close" data-dismiss="modal" onclick="toggleDropdownShare()"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'sendEmail_party_statement' %}" method="post" class="needs-validation" id="share_to_email_form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="emailIds" class="mb-2">Email IDs</label>
+                <textarea style="background-color: white;" class="form-control" name="email_ids" id="emailIds" rows="3" placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
+            </div>
+            <div class="form-group mt-2">
+                <label for="item_unitname" class="mb-2">Message(optional)</label>
+                <textarea name="email_message" id="email_message" class="form-control" cols="" rows="4" placeholder="This message will be sent along with Invoice details." style="background-color: white;"></textarea>
+            </div>
+            
+            <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffffff;">
+                <button type="submit" class=" w-50 text-uppercase btn btn-danger" style="background-color: rgb(212, 50, 50);">SEND MAIL</button>
+              </div>
+          </form>
+        </div>
+        
+      </div>
+    </div>
+</div>
+
+<script>
+
+    function filterTablebyType() {
+        var select = document.getElementById("FilterType");
+        var selectedValue = select.value;
+        var rows = document.getElementById("billtable").getElementsByTagName("tr");
+
+        for (var i = 1; i < rows.length; i++) {  // start from 1 to skip the header row
+            var cells = rows[i].getElementsByTagName("td");
+            if (cells.length > 1) {
+                var partyName = cells[1].innerText.trim();  // Get the party name from the second column
+                if (selectedValue === "All Parties" || selectedValue === partyName) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+  
+
+
+// print
+function printfunction() {
+    var printContents;
+    var printDiv = document.getElementById('tablediv');
+
+    if (printDiv.style.display !== 'none') {
+        printContents = document.getElementById("tablediv").innerHTML;
+    } else {
+        printContents = document.getElementById("whatToPrint").innerHTML;
+    }
+
+    var $printerDiv = $('<div class="printContainer" id="printContainer"></div>');
+    $printerDiv.html(printContents);
+    $('body').append($printerDiv).addClass("printingContent");
+
+    var h1Element = document.createElement("h1");
+    h1Element.textContent = "All Parties";
+    h1Element.style.textAlign = "center"; // Center the h1 element
+    var head = document.getElementById("printContainer");
+    head.insertBefore(h1Element, head.firstChild);
+
+    // Reduce the space between h1 and table by applying a top margin to the table
+    $('#printContainer table').css('margin-top', '10px');
+
+    // Reduce the space below the table by applying a bottom margin to the table
+    $('#printContainer table').css('margin-bottom', '10px');
+
+    window.print();
+    $printerDiv.remove();
+    $('body').removeClass("printingContent");
+}
+function all_party_filter_by_date() {
+    var todate = document.getElementById('toDate').value || 0;
+    var fromdate = document.getElementById('fromDate').value || 0;
+    document.getElementById('end_date').value = todate;
+    document.getElementById('start_date').value = fromdate;
+    
+
+    if(todate !== 0 && fromdate !== 0 ){
+        document.getElementById('datefilter').innerHTML = fromdate + '  to  ' + todate;
+        $.ajax({
+        type: 'GET',
+        url: "{% url 'all_transactions_date_filter' %}",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            fromdate: fromdate,
+            todate: todate
+
+        },
+        success: function(data) {
+            // var tbody = document.querySelector('#billtable tbody');
+            // console.log(data.stocklist,'==========')
+            // if (data && data.stocklist && Array.isArray(data.stocklist)) {
+            //     tbody.innerHTML = ''; // Clear existing rows
+            //     data.stocklist.forEach(function(item) {
+                    
+            //         var newRow = `<tr>
+            //                     <td class="" style="color: black;">${item[0]}</td>
+            //                     <td class="" style="color: black;">${item[1]}</td>
+            //                     <td class="" style="color: black;">${item[2]}</td>
+            //                     <td class="" style="color: black;">${item[3]}</td>
+            //                     <td class="" style="color: black;">${item[4]}</td>
+            //                     <td class="" style="color: black;">${item[5]}</td>
+            //                 </tr>`;
+            //         tbody.insertAdjacentHTML('beforeend', newRow);
+
+            var tbody1 = document.querySelector('#billtable tbody');
+            var tbody2 = document.querySelector('#excelbilltable tbody');
+
+            console.log(data.stocklist, '==========');
+            if (data && data.stocklist && Array.isArray(data.stocklist)) {
+                tbody1.innerHTML = ''; // Clear existing rows for the first table
+                tbody2.innerHTML = ''; // Clear existing rows for the second table
+                data.stocklist.forEach(function(item) {
+                    // Populate data into the first table
+                    var newRow1 = `<tr>
+                        <td class="" style="color: black;">${item[0]}</td>
+                        <td class="" style="color: black;">${item[1]}</td>
+                        <td class="" style="color: black;">${item[2]}</td>
+                        <td class="" style="color: black;">${item[3]}</td>
+                        <td class="" style="color: black;">${item[4]}</td>
+                        <td class="" style="color: black;">${item[5]}</td>
+                    </tr>`;
+                    tbody1.insertAdjacentHTML('beforeend', newRow1);
+
+                    // Populate data into the second table
+                    var newRow2 = `<tr>
+                        <td class="" style="color: black;">${item[0]}</td>
+                        <td class="" style="color: black;">${item[1]}</td>
+                        <td class="" style="color: black;">${item[2]}</td>
+                        <td class="" style="color: black;">${item[3]}</td>
+                        <td class="" style="color: black;">${item[4]}</td>
+                        <td class="" style="color: black;">${item[5]}</td>
+                    </tr>`;
+                    tbody2.insertAdjacentHTML('beforeend', newRow2);
+                    
+                    
+                });
+                calculateMoneyIn();
+                filterTablebyType();
+            } else {
+                console.error('Data format error: stocklist is missing or empty');
+            }
+            
+        },
+
+    });
+    }else{
+        console.log('enter both dates')
+    }
+    
+}
+{% comment %} function all_party_filter_by_date() {
+    var todate = document.getElementById('toDate').value || 0;
+    var fromdate = document.getElementById('fromDate').value || 0;
+    document.getElementById('end_date').value = todate;
+    document.getElementById('start_date').value = fromdate;
+    
+
+    if(todate !== 0 && fromdate !== 0 ){
+        document.getElementById('datefilter').innerHTML = fromdate + '  to  ' + todate;
+        $.ajax({
+        type: 'GET',
+        url: "{% url 'all_party_date_filter' %}",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            fromdate: fromdate,
+            todate: todate
+
+        },
+        success: function(data) {
+            
+
+            var tbody = document.querySelector('#billtable tbody');
+           
+            console.log(data.stocklist, '==========');
+            if (data && data.stocklist && Array.isArray(data.stocklist)) {
+                tbody.innerHTML = ''; // Clear existing rows for the first table
+                
+                data.stocklist.forEach(function(item) {
+                    // Populate data into the first table
+                    var newRow = `<tr>
+                        <td class="" style="color: black;">${item[0]}</td>
+                        <td class="" style="color: black;">${item[1]}</td>
+                        <td class="" style="color: black;">${item[2]}</td>
+                        <td class="" style="color: black;">${item[3]}</td>
+                        <td class="" style="color: black;">${item[4]}</td>
+                        <td class="" style="color: black;">${item[5]}</td>
+                    </tr>`;
+                    tbody.insertAdjacentHTML('beforeend', newRow);
+
+                  
+                    
+                });
+                
+            } else {
+                console.error('Data format error: stocklist is missing or empty');
+            }
+            
+        },
+
+    });
+    }else{
+        console.log('enter both dates')
+    }
+    
+} {% endcomment %}
+
+// pdf
+function generatePDF() {
+    const content = document.getElementById('tablediv');
+    const options = {
+        margin: 6, // Set left margin to 20mm
+        scale: 3,
+    };
+    // Create a div element for the heading
+    const heading = document.createElement('div');
+    heading.textContent = 'All Parties';
+    heading.style.textAlign = 'center'; // Center the heading
+    heading.style.marginBottom = '10px'; // Add space below the heading
+    heading.style.fontSize = '30px';
+    // Append the heading before the content
+    content.insertBefore(heading, content.firstChild);
+
+    const table = content.querySelector('#billtable');
+    if (table) {
+        table.classList.remove('table-striped');
+    }
+
+    // html2pdf().from(content).set(options).save('Stock_details.pdf');
+    html2pdf().from(content).set(options).save('All_Parties.pdf').then(function() {
+        // Remove the heading after PDF generation is complete
+        heading.remove();
+
+        const table = content.querySelector('#billtable');
+        if (table) {
+        table.classList.add('table-striped');
+    }
+    });
+}
+
+
+
+
+
+    
+
+</script>
+
+<script>
+    document.getElementById('fromDate').addEventListener('change', updateMinDate);
+    function updateMinDate() {
+        var selectedDate = document.getElementById('fromDate').value;
+        document.getElementById('toDate').min = selectedDate;
+    }
+</script>
+
+
+
+<script>
+    function cleardropdown(index){
+        if(index == 0){
+            document.getElementById('filterInput'+index).value = '';
+        }else{
+            document.getElementById('filterInput'+index).value = null;
+        }
+    }
+
+    function toggleDropdown(index) {
+        var dropdownContent = document.getElementById('dropdownContent' + index);
+        var isVisible = dropdownContent.style.display === 'block';
+        var allDropdowns = document.querySelectorAll('.dropdown-content');
+        allDropdowns.forEach(function (dropdown) {
+            dropdown.style.display = 'none';
+        });
+        dropdownContent.style.display = isVisible ? 'none' : 'block';
+    }
+
+
+
+    
+
+    function formatDateString(inputDate) {
+        const parsedDate = new Date(inputDate);
+        const day = parsedDate.getDate();
+        const month = parsedDate.getMonth() + 1;
+        const year = parsedDate.getFullYear();
+        const formattedDate = `${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}-${year}`;
+        return formattedDate;
+    }
+</script>
+<script>
+    function ExportToExcel(){
+        const table = document.querySelector('#tablediv');
+        var clonedTable = table.cloneNode(true);
+        var elementsToRemove = clonedTable.querySelectorAll(".dropdown-content");
+        elementsToRemove.forEach(function(element) {
+            element.parentNode.removeChild(element);
+        });
+        const ws = XLSX.utils.table_to_sheet(clonedTable);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        XLSX.writeFile(wb, 'Allpartiesreport.xlsx');
+    }
+
+    $(document).ready(function() {
+        var totalPayables = 0;
+        var totalReceivables = 0;
+        $("td:nth-child(6)").each(function() {
+            totalPayables += parseFloat($(this).text());
+        });
+        $("td:nth-child(5)").each(function() {
+            totalReceivables += parseFloat($(this).text());
+        });
+        $("#totalPayables").text(totalPayables);
+        $("#totalReceivables").text(totalReceivables);
+    });
+</script>
+
+
+{% endblock  %}
