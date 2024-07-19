@@ -645,7 +645,7 @@ urlpatterns = [
     path('vertical_balancesheet',views.vertical_balancesheet,name='vertical_balancesheet'),
     path('balancesheet_mail_horizontal',views.balancesheet_mail_horizontal,name='balancesheet_mail_horizontal'),
     path('balancesheet_mail_vertical',views.balancesheet_mail_vertical,name='balancesheet_mail_vertical'),
-   
+    #---------------- All party - Megha O V -------------------> 
     path('allparties',views.allparties,name='allparties'),
     path('all_party_date_filter',views.all_party_date_filter,name="all_party_date_filter"),
     path('sendEmail_all_parties',views.sendEmail_all_parties,name="sendEmail_all_parties"),

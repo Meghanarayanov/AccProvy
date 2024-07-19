@@ -21818,34 +21818,37 @@ def all_party_date_filter(request):
     }
     return JsonResponse(context)
 
-
 def sendEmail_all_parties(request):
     sid = request.session.get('staff_id')
     staff = staff_details.objects.get(id=sid)
     cmp = company.objects.get(id=staff.company.id)
-    
-    parties = party.objects.filter(company=cmp)
 
     if request.method == 'POST':
         try:
             emails_string = request.POST['email_ids']
             emails_list = [email.strip() for email in emails_string.split(',')]
             email_message = request.POST['email_message']
-            
+
             s_date = request.POST.get('start_date')
             e_date = request.POST.get('end_date')
             totalpayable = request.POST.get('totalpayable2')
             totalreceivable = request.POST.get('totalreceivable2')
-            
+            typet = request.POST.get('typet')
+            selected_party_id = request.POST.get('selected_party_id')
+
             start_date = None
             end_date = None
-            
+
             if s_date and e_date:
                 try:
                     start_date = datetime.strptime(s_date, '%Y-%m-%d').date()
                     end_date = datetime.strptime(e_date, '%Y-%m-%d').date()
                 except (ValueError, TypeError):
                     return JsonResponse({'error': 'Invalid date format'})
+
+            parties = party.objects.filter(company=cmp)
+            if typet != "All Parties" and selected_party_id:
+                parties = parties.filter(id=selected_party_id)
 
             party_data = []
             for p in parties:
@@ -21871,7 +21874,7 @@ def sendEmail_all_parties(request):
                 'totalpayable': totalpayable,
                 'totalreceivable': totalreceivable
             }
-            
+
             template_path = 'company/all_parties_pdf.html'
             template = get_template(template_path)
             html = template.render(context)
